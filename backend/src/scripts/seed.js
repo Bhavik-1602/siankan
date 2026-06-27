@@ -228,32 +228,58 @@ const mockProducts = [
 const seed = async () => {
   try {
     logger.info('Starting database seeding...');
-    
-    // Check if table has products
+
+    // 1️⃣ check products table
     const { count, error: countError } = await supabaseAdmin
       .from('products')
       .select('*', { count: 'exact', head: true });
-      
-    if (countError) {
-      throw countError;
-    }
-    
+
+    if (countError) throw countError;
+
     if (count > 0) {
       logger.info(`Database already has ${count} products. Skipping seeding.`);
       process.exit(0);
     }
-    
-    logger.info('Products table is empty. Seeding mock products...');
+
+    // 2️⃣ fetch categories (IMPORTANT - inside try)
+    const { data: categories, error } = await supabaseAdmin
+      .from('categories')
+      .select('id, slug');
+
+    if (error) throw error;
+
+    // 3️⃣ build dynamic map
+    const categoryMap = {};
+    categories.forEach((c) => {
+      categoryMap[c.slug] = c.id;
+    });
+
+    logger.info('Products table is empty. Preparing data...');
+
+    // 4️⃣ transform products
+    const fixedProducts = mockProducts.map((p) => ({
+      ...p,
+
+      // convert category slug → UUID
+      category_id: categoryMap[p.category],
+
+      // auto slug
+      slug: p.name
+        .toLowerCase()
+        .replace(/ /g, '-')
+        .replace(/[^\w-]+/g, '')
+    }));
+
+    // 5️⃣ insert into DB
     const { error: insertError } = await supabaseAdmin
       .from('products')
-      .insert(mockProducts);
-      
-    if (insertError) {
-      throw insertError;
-    }
-    
+      .insert(fixedProducts);
+
+    if (insertError) throw insertError;
+
     logger.info('Successfully seeded products table!');
     process.exit(0);
+
   } catch (err) {
     logger.error(`Failed to seed database: ${err.message}`);
     process.exit(1);

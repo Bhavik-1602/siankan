@@ -74,6 +74,25 @@ export const createProduct = async (productData: Omit<Product, 'id' | 'created_a
   }
 };
 
+export const updateProduct = async (id: string, productData: Omit<Product, 'id' | 'created_at'>): Promise<{ success: boolean; product: Product }> => {
+  try {
+    const res = await fetch(`/api/products/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(productData)
+    });
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.error || 'Failed to update product');
+    }
+    const data = await res.json();
+    return { success: true, product: data };
+  } catch (err: any) {
+    console.error("API updateProduct failed:", err);
+    throw err;
+  }
+};
+
 export const deleteProduct = async (id: string): Promise<{ success: boolean }> => {
   try {
     const res = await fetch(`/api/products/${id}`, {
@@ -349,3 +368,355 @@ export const updateUserProfile = async (userId: string, profileData: any): Promi
     return { success: false };
   }
 };
+
+// --- Categories ---
+
+export const getCategories = async (activeOnly = false): Promise<any[]> => {
+  try {
+    const res = await fetch(`/api/categories?activeOnly=${activeOnly}`);
+    if (!res.ok) throw new Error('Failed to fetch categories');
+    return await res.json();
+  } catch (err) {
+    console.error("API getCategories failed:", err);
+    return [];
+  }
+};
+
+export const createCategory = async (categoryData: any): Promise<any> => {
+  try {
+    const res = await fetch('/api/categories', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(categoryData)
+    });
+    if (!res.ok) throw new Error('Failed to create category');
+    return await res.json();
+  } catch (err) {
+    console.error("API createCategory failed:", err);
+    throw err;
+  }
+};
+
+export const updateCategory = async (id: string, categoryData: any): Promise<any> => {
+  try {
+    const res = await fetch(`/api/categories/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(categoryData)
+    });
+    if (!res.ok) throw new Error('Failed to update category');
+    return await res.json();
+  } catch (err) {
+    console.error("API updateCategory failed:", err);
+    throw err;
+  }
+};
+
+export const deleteCategory = async (id: string): Promise<boolean> => {
+  try {
+    const res = await fetch(`/api/categories/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to delete category');
+    return true;
+  } catch (err) {
+    console.error("API deleteCategory failed:", err);
+    return false;
+  }
+};
+
+// --- Banners ---
+
+export const getBanners = async (activeOnly = false): Promise<any[]> => {
+  try {
+    const res = await fetch(`/api/banners?activeOnly=${activeOnly}`);
+    if (!res.ok) throw new Error('Failed to fetch banners');
+    return await res.json();
+  } catch (err) {
+    console.error("API getBanners failed:", err);
+    return [];
+  }
+};
+
+export const createBanner = async (bannerData: any): Promise<any> => {
+  try {
+    const res = await fetch('/api/banners', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(bannerData)
+    });
+    if (!res.ok) throw new Error('Failed to create banner');
+    return await res.json();
+  } catch (err) {
+    console.error("API createBanner failed:", err);
+    throw err;
+  }
+};
+
+export const updateBanner = async (id: string, bannerData: any): Promise<any> => {
+  try {
+    const res = await fetch(`/api/banners/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(bannerData)
+    });
+    if (!res.ok) throw new Error('Failed to update banner');
+    return await res.json();
+  } catch (err) {
+    console.error("API updateBanner failed:", err);
+    throw err;
+  }
+};
+
+export const deleteBanner = async (id: string): Promise<boolean> => {
+  try {
+    const res = await fetch(`/api/banners/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to delete banner');
+    return true;
+  } catch (err) {
+    console.error("API deleteBanner failed:", err);
+    return false;
+  }
+};
+
+// --- Wishlist ---
+
+export const getWishlist = async (userId: string): Promise<any[]> => {
+  try {
+    const res = await fetch(`/api/wishlist/user/${userId}`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to fetch wishlist');
+    return await res.json();
+  } catch (err) {
+    console.error("API getWishlist failed:", err);
+    return [];
+  }
+};
+
+export const addToWishlist = async (productId: string): Promise<any> => {
+  try {
+    const res = await fetch('/api/wishlist', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ product_id: productId })
+    });
+    if (!res.ok) throw new Error('Failed to add to wishlist');
+    return await res.json();
+  } catch (err) {
+    console.error("API addToWishlist failed:", err);
+    throw err;
+  }
+};
+
+export const removeFromWishlist = async (productId: string): Promise<boolean> => {
+  try {
+    const res = await fetch(`/api/wishlist/${productId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to remove from wishlist');
+    return true;
+  } catch (err) {
+    console.error("API removeFromWishlist failed:", err);
+    return false;
+  }
+};
+
+// --- Addresses ---
+
+export const getAddresses = async (userId: string): Promise<any[]> => {
+  try {
+    const res = await fetch(`/api/users/addresses/${userId}`, {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to fetch addresses');
+    return await res.json();
+  } catch (err) {
+    console.error("API getAddresses failed:", err);
+    return [];
+  }
+};
+
+export const createAddress = async (addressData: any): Promise<any> => {
+  try {
+    const res = await fetch('/api/users/addresses', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(addressData)
+    });
+    if (!res.ok) throw new Error('Failed to create address');
+    return await res.json();
+  } catch (err) {
+    console.error("API createAddress failed:", err);
+    throw err;
+  }
+};
+
+export const updateAddress = async (id: string, addressData: any): Promise<any> => {
+  try {
+    const res = await fetch(`/api/users/addresses/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(addressData)
+    });
+    if (!res.ok) throw new Error('Failed to update address');
+    return await res.json();
+  } catch (err) {
+    console.error("API updateAddress failed:", err);
+    throw err;
+  }
+};
+
+export const deleteAddress = async (id: string): Promise<boolean> => {
+  try {
+    const res = await fetch(`/api/users/addresses/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to delete address');
+    return true;
+  } catch (err) {
+    console.error("API deleteAddress failed:", err);
+    return false;
+  }
+};
+
+// --- Reviews ---
+
+export const getReviewsByProduct = async (productId: string): Promise<any[]> => {
+  try {
+    const res = await fetch(`/api/reviews/product/${productId}`);
+    if (!res.ok) throw new Error('Failed to fetch reviews');
+    return await res.json();
+  } catch (err) {
+    console.error("API getReviewsByProduct failed:", err);
+    return [];
+  }
+};
+
+export const createReview = async (reviewData: any): Promise<any> => {
+  try {
+    const res = await fetch('/api/reviews', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(reviewData)
+    });
+    if (!res.ok) throw new Error('Failed to create review');
+    return await res.json();
+  } catch (err) {
+    console.error("API createReview failed:", err);
+    throw err;
+  }
+};
+
+export const deleteReview = async (id: string): Promise<boolean> => {
+  try {
+    const res = await fetch(`/api/reviews/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to delete review');
+    return true;
+  } catch (err) {
+    console.error("API deleteReview failed:", err);
+    return false;
+  }
+};
+
+// --- Coupons ---
+
+export const getCoupons = async (): Promise<any[]> => {
+  try {
+    const res = await fetch('/api/coupons', {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to fetch coupons');
+    return await res.json();
+  } catch (err) {
+    console.error("API getCoupons failed:", err);
+    return [];
+  }
+};
+
+export const createCoupon = async (couponData: any): Promise<any> => {
+  try {
+    const res = await fetch('/api/coupons', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(couponData)
+    });
+    if (!res.ok) throw new Error('Failed to create coupon');
+    return await res.json();
+  } catch (err) {
+    console.error("API createCoupon failed:", err);
+    throw err;
+  }
+};
+
+export const updateCoupon = async (id: string, couponData: any): Promise<any> => {
+  try {
+    const res = await fetch(`/api/coupons/${id}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(couponData)
+    });
+    if (!res.ok) throw new Error('Failed to update coupon');
+    return await res.json();
+  } catch (err) {
+    console.error("API updateCoupon failed:", err);
+    throw err;
+  }
+};
+
+export const deleteCoupon = async (id: string): Promise<boolean> => {
+  try {
+    const res = await fetch(`/api/coupons/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to delete coupon');
+    return true;
+  } catch (err) {
+    console.error("API deleteCoupon failed:", err);
+    return false;
+  }
+};
+
+export const validateCoupon = async (code: string): Promise<any> => {
+  try {
+    const res = await fetch('/api/coupons/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to validate coupon');
+    }
+    return await res.json();
+  } catch (err: any) {
+    console.error("API validateCoupon failed:", err);
+    return { success: false, error: err.message };
+  }
+};
+
+// --- Admin Stats ---
+
+export const getAdminStats = async (): Promise<any> => {
+  try {
+    const res = await fetch('/api/admin/stats', {
+      headers: getAuthHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to fetch admin stats');
+    return await res.json();
+  } catch (err) {
+    console.error("API getAdminStats failed:", err);
+    return null;
+  }
+};
+

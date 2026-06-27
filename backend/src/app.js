@@ -11,6 +11,12 @@ import orderRoutes from './routes/orderRoutes.js';
 import inquiryRoutes from './routes/inquiryRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import uploadRoute from './routes/uploadRoute.js';
+import categoryRoutes from './routes/categoryRoutes.js';
+import bannerRoutes from './routes/bannerRoutes.js';
+import wishlistRoutes from './routes/wishlistRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
+import couponRoutes from './routes/couponRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 import { errorHandler } from './middleware/errorMiddleware.js';
 import { logger } from './utils/logger.js';
@@ -57,6 +63,12 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/inquiries', inquiryRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/upload', uploadRoute);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/banners', bannerRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/coupons', couponRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Global Error Handler
 app.use(errorHandler);

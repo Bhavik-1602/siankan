@@ -1,9 +1,9 @@
-import { supabase } from '../config/supabase.js';
+import { supabase, supabaseAdmin } from '../config/supabase.js';
 
 export const signup = async (req, res, next) => {
   try {
     const { email, password, fullName } = req.body;
-    
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -33,21 +33,61 @@ export const signup = async (req, res, next) => {
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    
+
+    // Login with Supabase Auth
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
+    console.log("Auth User:", data.user);
+    console.log("Auth User ID:", data.user.id);
+
+    const { data: allProfiles } = await supabaseAdmin
+      .from("profiles")
+      .select("*");
+
+    console.log("ALL PROFILES");
+    console.log(allProfiles);
 
     if (error) {
-      return res.status(400).json({ success: false, error: error.message });
+      return res.status(400).json({
+        success: false,
+        error: error.message
+      });
     }
 
+    // Get user profile from profiles table
+    const {
+      data: profile,
+      error: profileError,
+    } = await supabaseAdmin
+      .from("profiles")
+      .select("*")
+      .eq("id", data.user.id)
+      .maybeSingle();
+
+    console.log("Profile:", profile);
+    console.log("Profile Error:", profileError);
+
+    if (profileError) {
+      return res.status(400).json({
+        success: false,
+        error: profileError.message
+      });
+    }
+
+    // Return user with role
     res.status(200).json({
       success: true,
-      user: data.user,
+      user: {
+        id: data.user.id,
+        email: data.user.email,
+        full_name: profile.full_name,
+        role: profile.role
+      },
       session: data.session
     });
+
   } catch (err) {
     next(err);
   }

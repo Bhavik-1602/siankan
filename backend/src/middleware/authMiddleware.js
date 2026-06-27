@@ -47,21 +47,34 @@ export const optionalProtect = async (req, res, next) => {
   }
 };
 
+
+
+import { supabaseAdmin } from "../config/supabase.js";
+
 export const admin = async (req, res, next) => {
   try {
-    if (!req.user) {
-      return res.status(401).json({ success: false, error: 'Not authorized' });
+    const { data: profile, error } = await supabaseAdmin
+      .from("profiles")
+      .select("role")
+      .eq("id", req.user.id)
+      .single();
+
+    if (error || !profile) {
+      return res.status(403).json({
+        success: false,
+        error: "Profile not found"
+      });
     }
-    
-    const isAdmin = req.user.user_metadata?.role === 'admin' || 
-                    req.user.email?.startsWith('admin@') || 
-                    req.user.app_metadata?.role === 'admin';
-                    
-    if (!isAdmin) {
-      return res.status(403).json({ success: false, error: 'Access denied: Admin role required' });
+
+    if (profile.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        error: "Access denied"
+      });
     }
-    
+
     next();
+
   } catch (err) {
     next(err);
   }

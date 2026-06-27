@@ -15,7 +15,7 @@ export const getProducts = async (req, res, next) => {
       limit = 50
     } = req.query;
 
-    let query = supabase.from('products').select('*', { count: 'exact' });
+    let query = supabaseAdmin.from('products').select('*', { count: 'exact' });
 
     if (category && category !== 'all') {
       query = query.eq('category', category);
@@ -82,9 +82,43 @@ export const getProductById = async (req, res, next) => {
 
 export const createProduct = async (req, res, next) => {
   try {
+    const {
+      name,
+      slug,
+      description,
+      price,
+      discount_price,
+      stock,
+      category_id,
+      image_url,
+      zoom_image_url,
+      colors,
+      is_featured,
+      active,
+      fabric,
+      embroidery,
+      artisan_notes
+    } = req.body;
+
     const { data, error } = await supabaseAdmin
       .from('products')
-      .insert(req.body)
+      .insert({
+        name,
+        slug,
+        description,
+        price,
+        discount_price,
+        stock,
+        category_id,
+        image_url,
+        zoom_image_url,
+        colors,
+        is_featured,
+        active,
+        fabric,
+        embroidery,
+        artisan_notes
+      })
       .select()
       .single();
 

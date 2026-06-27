@@ -53,14 +53,52 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     // 2. Auth initialization
     async function initAuth() {
       setLoading(true);
-      if (!isUsingMock && supabase) {
-        const { data: { session } } = await supabase.auth.getSession();
-        setUser(session?.user || null);
+      const client = supabase as any;
+      if (!isUsingMock && client) {
+        const fetchProfileAndSetUser = async (authUser: any) => {
+          if (!authUser) {
+            setUser(null);
+            return null;
+          }
+          try {
+            const { data: profile } = await client
+              .from('profiles')
+              .select('role, full_name')
+              .eq('id', authUser.id)
+              .maybeSingle();
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-          setUser(session?.user || null);
-        });
+            const fullUser = {
+              ...authUser,
+              role: profile?.role || 'customer',
+              full_name: profile?.full_name || authUser.user_metadata?.full_name
+            };
+            setUser(fullUser);
+            return fullUser;
+          } catch (err) {
+            console.error("Failed to load profile for user:", err);
+            setUser(authUser);
+            return authUser;
+          }
+        };
+
+        const { data: { session } } = await client.auth.getSession();
+        if (session?.user) {
+          await fetchProfileAndSetUser(session.user);
+        } else {
+          setUser(null);
+        }
         setLoading(false);
+
+        const { data: { subscription } } = client.auth.onAuthStateChange(async (_event: any, session: any) => {
+          setLoading(true);
+          if (session?.user) {
+            await fetchProfileAndSetUser(session.user);
+          } else {
+            setUser(null);
+          }
+          setLoading(false);
+        });
+
         return () => subscription.unsubscribe();
       } else {
         const mockUser = getCurrentUser();

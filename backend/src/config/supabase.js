@@ -41,3 +41,8 @@ export const supabaseAdmin = supabaseServiceRoleKey
   : supabase;
 
 console.log(`Supabase Client initialized. Admin bypass active: ${!!supabaseServiceRoleKey}`);
+
+console.log(
+  "SERVICE ROLE PREFIX:",
+  supabaseServiceRoleKey.substring(0, 20)
+);

@@ -66,29 +66,29 @@ export default function Gallery() {
   const filters = [
     { id: 'all', label: 'All Media', icon: ImageIcon },
     { id: 'photoshoot', label: 'Photoshoots', icon: Camera },
-    { id: 'handwork', label: 'Handwork Stitches', icon: Sparkles },
+    { id: 'handwork', label: 'Handwork', icon: Sparkles },
     { id: 'showcase', label: 'Client Showcase', icon: UserCheck }
   ];
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 animate-in fade-in duration-500">
+    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 animate-fade-in-up">
       
       {/* Header */}
-      <section className="text-center max-w-2xl mx-auto mb-12 space-y-3">
-        <span className="text-xs font-bold tracking-[0.2em] text-[#D4AF37] uppercase">
+      <section className="text-center max-w-2xl mx-auto mb-16 space-y-4">
+        <span className="text-[10px] font-bold tracking-[0.25em] text-gold-400 uppercase block">
           Artistry Catalogue
         </span>
-        <h1 className="font-serif text-4xl font-bold text-[#4A0E17]">
+        <h1 className="font-editorial text-4xl font-light text-neutral-850">
           Design & Craft Gallery
         </h1>
-        <div className="w-12 h-[1px] bg-[#D4AF37] mx-auto pt-1" />
-        <p className="text-neutral-500 text-sm leading-relaxed">
+        <div className="w-10 h-[1.5px] bg-gold-300 mx-auto" />
+        <p className="text-neutral-500 text-xs sm:text-sm leading-relaxed">
           Scroll through our high-end fashion shoots, close-up dabka handwork swatches, and client draped presentations.
         </p>
       </section>
 
       {/* Filter tab buttons */}
-      <div className="flex flex-wrap justify-center gap-3 mb-12">
+      <div className="flex flex-wrap justify-center gap-3 mb-16 select-none">
         {filters.map(filt => {
           const IconComponent = filt.icon;
           const isActive = activeFilter === filt.id;
@@ -96,13 +96,13 @@ export default function Gallery() {
             <button
               key={filt.id}
               onClick={() => setActiveFilter(filt.id as any)}
-              className={`flex items-center gap-2 text-xs font-semibold tracking-widest uppercase py-2.5 px-5 rounded-full border transition-all ${
+              className={`flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase py-2.5 px-5 rounded-full border transition-all duration-300 cursor-pointer ${
                 isActive 
                   ? 'bg-[#4A0E17] text-white border-[#4A0E17] shadow-sm' 
-                  : 'bg-white border-neutral-200 text-neutral-500 hover:border-[#4A0E17] hover:text-[#4A0E17]'
+                  : 'bg-white border-neutral-200 text-neutral-500 hover:border-maroon-600 hover:text-maroon-600'
               }`}
             >
-              <IconComponent size={14} />
+              <IconComponent size={12} />
               <span>{filt.label}</span>
             </button>
           );
@@ -112,21 +112,21 @@ export default function Gallery() {
       {/* Image Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {filtered.map(item => (
-          <div key={item.id} className="group bg-white rounded-lg border border-neutral-200/50 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="relative pt-[100%] overflow-hidden bg-stone-100">
+          <div key={item.id} className="group bg-white rounded-sm border border-neutral-200/40 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500 flex flex-col">
+            <div className="relative pt-[100%] overflow-hidden bg-neutral-50 select-none">
               <img 
                 src={item.src} 
                 alt={item.title} 
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-[#4A0E17]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-[#4A0E17]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </div>
             
-            <div className="p-5 space-y-1">
-              <span className="text-[#D4AF37] text-[9px] font-bold uppercase tracking-widest block">
+            <div className="p-6 space-y-1.5 flex-grow flex flex-col justify-center border-t border-neutral-100">
+              <span className="text-gold-400 text-[9px] font-bold uppercase tracking-wider block">
                 {item.categoryLabel}
               </span>
-              <h3 className="font-serif text-sm font-semibold text-neutral-800 line-clamp-1">
+              <h3 className="font-editorial text-base text-neutral-800 line-clamp-1 leading-snug">
                 {item.title}
               </h3>
             </div>

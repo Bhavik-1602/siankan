@@ -116,7 +116,7 @@ export default function ProductDetail() {
           <div className="h-[480px] sm:h-[600px] w-full">
             <ImageZoom 
               src={activeImage} 
-              zoomSrc={product.zoom_image_url} 
+              zoomSrc={product.zoom_image_url || undefined} 
               alt={product.name}
             />
           </div>

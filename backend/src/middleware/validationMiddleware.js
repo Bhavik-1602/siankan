@@ -69,3 +69,32 @@ export const profileSchema = validateRequest(Joi.object({
   phone: Joi.string().allow('', null),
   avatar_url: Joi.string().allow('', null)
 }));
+
+export const categorySchema = validateRequest(Joi.object({
+  name: Joi.string().min(2).required(),
+  slug: Joi.string().min(2).required(),
+  active: Joi.boolean().default(true)
+}));
+
+export const bannerSchema = validateRequest(Joi.object({
+  title: Joi.string().allow('', null),
+  subtitle: Joi.string().allow('', null),
+  image_url: Joi.string().required(),
+  link_url: Joi.string().allow('', null),
+  active: Joi.boolean().default(true)
+}));
+
+export const reviewSchema = validateRequest(Joi.object({
+  product_id: Joi.string().uuid().required(),
+  rating: Joi.number().integer().min(1).max(5).required(),
+  comment: Joi.string().allow('', null)
+}));
+
+export const couponSchema = validateRequest(Joi.object({
+  code: Joi.string().min(2).required(),
+  discount_type: Joi.string().valid('percentage', 'flat').required(),
+  discount_value: Joi.number().min(0).required(),
+  active: Joi.boolean().default(true),
+  expiry_date: Joi.string().allow('', null)
+}));
+
