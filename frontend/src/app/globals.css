@@ -22,6 +22,17 @@
 
   --color-alabaster: #faf8f5;
   --color-cream: #f5e6d3;
+
+  --color-admin-bg: #faf8f5;
+  --color-admin-fg: #383635;
+  --color-admin-card: #fdfcfb;
+  --color-admin-primary: #963c2d;
+  --color-admin-secondary: #eae8e6;
+  --color-admin-muted: #ebe9e7;
+  --color-admin-muted-fg: #85817e;
+  --color-admin-accent: #3fa387;
+  --color-admin-border: #e2e0dd;
+  --color-admin-destructive: #a62d2d;
 }
 
 /* Custom global overrides */
@@ -108,3 +119,632 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-serif), Georgia, serif;
+
+  /* ── Sainkai admin design tokens (mirrors Thrive "Commerce Control Room") ── */
+
+  /* Main surface */
+  --color-background: oklch(0.977 0.008 85);
+  --color-foreground: oklch(0.22 0.012 60);
+
+  /* Cards */
+  --color-card: oklch(0.995 0.004 90);
+  --color-card-foreground: oklch(0.22 0.012 60);
+
+  /* Primary = burnt terracotta */
+  --color-primary: oklch(0.59 0.155 42);
+  --color-primary-foreground: oklch(0.98 0.01 85);
+
+  /* Secondary surfaces */
+  --color-secondary: oklch(0.94 0.012 80);
+  --color-secondary-foreground: oklch(0.28 0.012 60);
+
+  /* Muted */
+  --color-muted: oklch(0.945 0.01 82);
+  --color-muted-foreground: oklch(0.52 0.014 65);
+
+  /* Accent = sage */
+  --color-accent: oklch(0.55 0.07 165);
+  --color-accent-foreground: oklch(0.98 0.01 85);
+
+  /* Semantic */
+  --color-success: oklch(0.58 0.09 160);
+  --color-success-foreground: oklch(0.98 0.01 85);
+  --color-warning: oklch(0.72 0.14 75);
+  --color-warning-foreground: oklch(0.25 0.03 70);
+  --color-destructive: oklch(0.55 0.2 27);
+  --color-destructive-foreground: oklch(0.98 0.01 85);
+
+  /* Borders */
+  --color-border: oklch(0.9 0.012 80);
+  --color-input: oklch(0.9 0.012 80);
+  --color-ring: oklch(0.59 0.155 42);
+
+  /* Charts */
+  --color-chart-1: oklch(0.59 0.155 42);
+  --color-chart-2: oklch(0.55 0.07 165);
+  --color-chart-3: oklch(0.72 0.14 75);
+  --color-chart-4: oklch(0.48 0.09 250);
+  --color-chart-5: oklch(0.55 0.13 350);
+
+  /* ── Dark sidebar (same as Thrive) ── */
+  --color-sidebar: oklch(0.21 0.012 60);
+  --color-sidebar-foreground: oklch(0.9 0.008 80);
+  --color-sidebar-primary: oklch(0.62 0.16 45);
+  --color-sidebar-primary-foreground: oklch(0.98 0.01 85);
+  --color-sidebar-accent: oklch(0.27 0.012 60);
+  --color-sidebar-accent-foreground: oklch(0.96 0.008 80);
+  --color-sidebar-border: oklch(0.3 0.012 60);
+
+  /* Shadows */
+  --shadow-elegant: 0 1px 2px oklch(0.22 0.012 60 / 0.04), 0 8px 28px -12px oklch(0.22 0.012 60 / 0.12);
+  --shadow-glow: 0 12px 40px -12px oklch(0.59 0.155 42 / 0.35);
+  --gradient-primary: linear-gradient(135deg, oklch(0.62 0.16 45), oklch(0.66 0.15 28));
+
+  /* Legacy admin token aliases for pages that still use them */
+  --color-admin-bg: oklch(0.977 0.008 85);
+  --color-admin-fg: oklch(0.22 0.012 60);
+  --color-admin-card: oklch(0.995 0.004 90);
+  --color-admin-primary: oklch(0.59 0.155 42);
+  --color-admin-secondary: oklch(0.94 0.012 80);
+  --color-admin-muted: oklch(0.945 0.01 82);
+  --color-admin-muted-fg: oklch(0.52 0.014 65);
+  --color-admin-accent: oklch(0.55 0.07 165);
+  --color-admin-border: oklch(0.9 0.012 80);
+  --color-admin-destructive: oklch(0.55 0.2 27);
+
+  /* Gold / Maroon palette (storefront) */
+  --color-gold-50: #fbf9f4;
+  --color-gold-100: #f5eed3;
+  --color-gold-200: #eadca8;
+  --color-gold-300: #d4af37;
+  --color-gold-400: #c29d2b;
+  --color-gold-500: #a7831e;
+
+  --color-maroon-50: #faf1f2;
+  --color-maroon-100: #f4dddf;
+  --color-maroon-200: #e8bdc1;
+  --color-maroon-300: #d0828b;
+  --color-maroon-400: #a94250;
+  --color-maroon-500: #721c28;
+  --color-maroon-600: #4a0e17;
+  --color-maroon-700: #30060c;
+
+  --color-alabaster: #faf8f5;
+  --color-cream: #f5e6d3;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-alabaster);
+  color: #171717;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* ── Admin area overrides ── */
+.admin-root {
+  font-family: var(--font-sans);
+  background-color: oklch(0.977 0.008 85);
+  color: oklch(0.22 0.012 60);
+}
+
+/* Storefront utilities */
+.font-editorial { font-family: var(--font-serif); }
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, #d4af37 0%, #f5eed3 50%, #c29d2b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-maroon-gradient {
+  background: linear-gradient(135deg, #721c28 0%, #4a0e17 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass-panel {
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.glass-panel-dark {
+  background: rgba(23,23,23,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+.input-premium {
+  background-color: #fff;
+  border: 1px solid #e5e5e5;
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  outline: none;
+}
+.input-premium:focus {
+  border-color: #4a0e17;
+  box-shadow: 0 0 0 1px rgba(74,14,23,0.1);
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Admin component classes (Thrive design tokens) ── */
+
+/* Panel / Card */
+.admin-panel {
+  border-radius: 16px;
+  border: 1px solid oklch(0.9 0.012 80);
+  background: oklch(0.995 0.004 90);
+  padding: 20px;
+  box-shadow: 0 1px 2px oklch(0.22 0.012 60 / 0.04), 0 8px 28px -12px oklch(0.22 0.012 60 / 0.12);
+}
+
+/* Page header title */
+.admin-h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: oklch(0.22 0.012 60);
+}
+.admin-h2 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: oklch(0.22 0.012 60);
+}
+.admin-subtitle { font-size: 13px; color: oklch(0.52 0.014 65); margin-top: 4px; }
+.admin-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: oklch(0.52 0.014 65); }
+
+/* Buttons */
+.admin-btn-primary {
+  background: oklch(0.59 0.155 42);
+  color: oklch(0.98 0.01 85);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 2px 8px oklch(0.59 0.155 42 / 0.3);
+}
+.admin-btn-primary:hover { background: oklch(0.54 0.155 42); }
+
+.admin-btn-ghost {
+  background: transparent;
+  color: oklch(0.22 0.012 60);
+  border: 1px solid oklch(0.9 0.012 80);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.admin-btn-ghost:hover { background: oklch(0.945 0.01 82); }
+
+.admin-btn-danger {
+  background: transparent;
+  color: oklch(0.55 0.2 27);
+  border: 1px solid oklch(0.55 0.2 27 / 0.3);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.admin-btn-danger:hover { background: oklch(0.55 0.2 27 / 0.1); }
+
+/* Inputs */
+.admin-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: oklch(0.977 0.008 85);
+  border: 1px solid oklch(0.9 0.012 80);
+  border-radius: 10px;
+  font-size: 13px;
+  color: oklch(0.22 0.012 60);
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+.admin-input:focus {
+  border-color: oklch(0.59 0.155 42);
+  box-shadow: 0 0 0 3px oklch(0.59 0.155 42 / 0.12);
+}
+
+/* Table */
+.admin-table { width: 100%; border-collapse: collapse; font-size: 13px; color: oklch(0.22 0.012 60); }
+.admin-table th {
+  padding-bottom: 12px;
+  padding-right: 16px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: oklch(0.52 0.014 65);
+  border-bottom: 1px solid oklch(0.9 0.012 80);
+}
+.admin-table td {
+  padding: 14px 16px 14px 0;
+  border-bottom: 1px solid oklch(0.9 0.012 80);
+}
+.admin-table tr:hover td { background: oklch(0.94 0.012 80 / 0.4); }
+
+/* Loading */
+.admin-loading {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 40vh; font-size: 13px; color: oklch(0.52 0.014 65);
+}
+
+/* Error */
+.admin-error {
+  background: oklch(0.55 0.2 27 / 0.08);
+  border: 1px solid oklch(0.55 0.2 27 / 0.25);
+  color: oklch(0.45 0.2 27);
+  font-size: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+}
+
+/* Badge */
+.admin-badge {
+  display: inline-flex; align-items: center;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.admin-badge-success { background: oklch(0.58 0.09 160 / 0.15); color: oklch(0.45 0.09 160); }
+.admin-badge-info    { background: oklch(0.48 0.09 250 / 0.15); color: oklch(0.38 0.09 250); }
+.admin-badge-warning { background: oklch(0.72 0.14 75 / 0.2);  color: oklch(0.48 0.1 75); }
+.admin-badge-danger  { background: oklch(0.55 0.2 27 / 0.15);  color: oklch(0.45 0.2 27); }
+.admin-badge-muted   { background: oklch(0.945 0.01 82); color: oklch(0.52 0.014 65); }
+
+
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-serif), Georgia, serif;
+
+  /* ── Sainkai admin design tokens (mirrors Thrive "Commerce Control Room") ── */
+
+  /* Main surface */
+  --color-background: oklch(0.977 0.008 85);
+  --color-foreground: oklch(0.22 0.012 60);
+
+  /* Cards */
+  --color-card: oklch(0.995 0.004 90);
+  --color-card-foreground: oklch(0.22 0.012 60);
+
+  /* Primary = burnt terracotta */
+  --color-primary: oklch(0.59 0.155 42);
+  --color-primary-foreground: oklch(0.98 0.01 85);
+
+  /* Secondary surfaces */
+  --color-secondary: oklch(0.94 0.012 80);
+  --color-secondary-foreground: oklch(0.28 0.012 60);
+
+  /* Muted */
+  --color-muted: oklch(0.945 0.01 82);
+  --color-muted-foreground: oklch(0.52 0.014 65);
+
+  /* Accent = sage */
+  --color-accent: oklch(0.55 0.07 165);
+  --color-accent-foreground: oklch(0.98 0.01 85);
+
+  /* Semantic */
+  --color-success: oklch(0.58 0.09 160);
+  --color-success-foreground: oklch(0.98 0.01 85);
+  --color-warning: oklch(0.72 0.14 75);
+  --color-warning-foreground: oklch(0.25 0.03 70);
+  --color-destructive: oklch(0.55 0.2 27);
+  --color-destructive-foreground: oklch(0.98 0.01 85);
+
+  /* Borders */
+  --color-border: oklch(0.9 0.012 80);
+  --color-input: oklch(0.9 0.012 80);
+  --color-ring: oklch(0.59 0.155 42);
+
+  /* Charts */
+  --color-chart-1: oklch(0.59 0.155 42);
+  --color-chart-2: oklch(0.55 0.07 165);
+  --color-chart-3: oklch(0.72 0.14 75);
+  --color-chart-4: oklch(0.48 0.09 250);
+  --color-chart-5: oklch(0.55 0.13 350);
+
+  /* ── Dark sidebar (same as Thrive) ── */
+  --color-sidebar: oklch(0.21 0.012 60);
+  --color-sidebar-foreground: oklch(0.9 0.008 80);
+  --color-sidebar-primary: oklch(0.62 0.16 45);
+  --color-sidebar-primary-foreground: oklch(0.98 0.01 85);
+  --color-sidebar-accent: oklch(0.27 0.012 60);
+  --color-sidebar-accent-foreground: oklch(0.96 0.008 80);
+  --color-sidebar-border: oklch(0.3 0.012 60);
+
+  /* Shadows */
+  --shadow-elegant: 0 1px 2px oklch(0.22 0.012 60 / 0.04), 0 8px 28px -12px oklch(0.22 0.012 60 / 0.12);
+  --shadow-glow: 0 12px 40px -12px oklch(0.59 0.155 42 / 0.35);
+  --gradient-primary: linear-gradient(135deg, oklch(0.62 0.16 45), oklch(0.66 0.15 28));
+
+  /* Legacy admin token aliases for pages that still use them */
+  --color-admin-bg: oklch(0.977 0.008 85);
+  --color-admin-fg: oklch(0.22 0.012 60);
+  --color-admin-card: oklch(0.995 0.004 90);
+  --color-admin-primary: oklch(0.59 0.155 42);
+  --color-admin-secondary: oklch(0.94 0.012 80);
+  --color-admin-muted: oklch(0.945 0.01 82);
+  --color-admin-muted-fg: oklch(0.52 0.014 65);
+  --color-admin-accent: oklch(0.55 0.07 165);
+  --color-admin-border: oklch(0.9 0.012 80);
+  --color-admin-destructive: oklch(0.55 0.2 27);
+
+  /* Gold / Maroon palette (storefront) */
+  --color-gold-50: #fbf9f4;
+  --color-gold-100: #f5eed3;
+  --color-gold-200: #eadca8;
+  --color-gold-300: #d4af37;
+  --color-gold-400: #c29d2b;
+  --color-gold-500: #a7831e;
+
+  --color-maroon-50: #faf1f2;
+  --color-maroon-100: #f4dddf;
+  --color-maroon-200: #e8bdc1;
+  --color-maroon-300: #d0828b;
+  --color-maroon-400: #a94250;
+  --color-maroon-500: #721c28;
+  --color-maroon-600: #4a0e17;
+  --color-maroon-700: #30060c;
+
+  --color-alabaster: #faf8f5;
+  --color-cream: #f5e6d3;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-alabaster);
+  color: #171717;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* ── Admin area overrides ── */
+.admin-root {
+  font-family: var(--font-sans);
+  background-color: oklch(0.977 0.008 85);
+  color: oklch(0.22 0.012 60);
+}
+
+/* Storefront utilities */
+.font-editorial { font-family: var(--font-serif); }
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, #d4af37 0%, #f5eed3 50%, #c29d2b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-maroon-gradient {
+  background: linear-gradient(135deg, #721c28 0%, #4a0e17 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass-panel {
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.glass-panel-dark {
+  background: rgba(23,23,23,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+.input-premium {
+  background-color: #fff;
+  border: 1px solid #e5e5e5;
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  outline: none;
+}
+.input-premium:focus {
+  border-color: #4a0e17;
+  box-shadow: 0 0 0 1px rgba(74,14,23,0.1);
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Admin component classes (Thrive design tokens) ── */
+
+/* Panel / Card */
+.admin-panel {
+  border-radius: 16px;
+  border: 1px solid oklch(0.9 0.012 80);
+  background: oklch(0.995 0.004 90);
+  padding: 20px;
+  box-shadow: 0 1px 2px oklch(0.22 0.012 60 / 0.04), 0 8px 28px -12px oklch(0.22 0.012 60 / 0.12);
+}
+
+/* Page header title */
+.admin-h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: oklch(0.22 0.012 60);
+}
+.admin-h2 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: oklch(0.22 0.012 60);
+}
+.admin-subtitle { font-size: 13px; color: oklch(0.52 0.014 65); margin-top: 4px; }
+.admin-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: oklch(0.52 0.014 65); }
+
+/* Buttons */
+.admin-btn-primary {
+  background: oklch(0.59 0.155 42);
+  color: oklch(0.98 0.01 85);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 2px 8px oklch(0.59 0.155 42 / 0.3);
+}
+.admin-btn-primary:hover { background: oklch(0.54 0.155 42); }
+
+.admin-btn-ghost {
+  background: transparent;
+  color: oklch(0.22 0.012 60);
+  border: 1px solid oklch(0.9 0.012 80);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.admin-btn-ghost:hover { background: oklch(0.945 0.01 82); }
+
+.admin-btn-danger {
+  background: transparent;
+  color: oklch(0.55 0.2 27);
+  border: 1px solid oklch(0.55 0.2 27 / 0.3);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.admin-btn-danger:hover { background: oklch(0.55 0.2 27 / 0.1); }
+
+/* Inputs */
+.admin-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: oklch(0.977 0.008 85);
+  border: 1px solid oklch(0.9 0.012 80);
+  border-radius: 10px;
+  font-size: 13px;
+  color: oklch(0.22 0.012 60);
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+.admin-input:focus {
+  border-color: oklch(0.59 0.155 42);
+  box-shadow: 0 0 0 3px oklch(0.59 0.155 42 / 0.12);
+}
+
+/* Table */
+.admin-table { width: 100%; border-collapse: collapse; font-size: 13px; color: oklch(0.22 0.012 60); }
+.admin-table th {
+  padding-bottom: 12px;
+  padding-right: 16px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: oklch(0.52 0.014 65);
+  border-bottom: 1px solid oklch(0.9 0.012 80);
+}
+.admin-table td {
+  padding: 14px 16px 14px 0;
+  border-bottom: 1px solid oklch(0.9 0.012 80);
+}
+.admin-table tr:hover td { background: oklch(0.94 0.012 80 / 0.4); }
+
+/* Loading */
+.admin-loading {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 40vh; font-size: 13px; color: oklch(0.52 0.014 65);
+}
+
+/* Error */
+.admin-error {
+  background: oklch(0.55 0.2 27 / 0.08);
+  border: 1px solid oklch(0.55 0.2 27 / 0.25);
+  color: oklch(0.45 0.2 27);
+  font-size: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+}
+
+/* Badge */
+.admin-badge {
+  display: inline-flex; align-items: center;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.admin-badge-success { background: oklch(0.58 0.09 160 / 0.15); color: oklch(0.45 0.09 160); }
+.admin-badge-info    { background: oklch(0.48 0.09 250 / 0.15); color: oklch(0.38 0.09 250); }
+.admin-badge-warning { background: oklch(0.72 0.14 75 / 0.2);  color: oklch(0.48 0.1 75); }
+.admin-badge-danger  { background: oklch(0.55 0.2 27 / 0.15);  color: oklch(0.45 0.2 27); }
+.admin-badge-muted   { background: oklch(0.945 0.01 82); color: oklch(0.52 0.014 65); }

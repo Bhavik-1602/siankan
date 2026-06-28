@@ -47,51 +47,61 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#FAF8F5] pt-32 pb-20 px-4 flex items-center justify-center">
-      <div className="w-full max-w-md bg-white rounded-xl p-8 shadow-lg">
+    <main className="min-h-screen bg-admin-bg flex items-center justify-center px-4 font-sans">
+      <div className="w-full max-w-md bg-admin-card border border-admin-border rounded-2xl p-8 shadow-sm">
 
-        <h1 className="text-3xl font-bold text-center mb-6">
-          Admin Login
-        </h1>
+        <div className="text-center mb-8">
+          <span className="grid h-12 w-12 place-items-center rounded-xl bg-admin-primary text-white shadow-sm font-semibold mx-auto mb-4 text-lg">
+            N&A
+          </span>
+          <h1 className="font-serif text-3xl font-medium tracking-tight text-admin-fg">
+            Admin Console
+          </h1>
+          <p className="text-xs text-admin-muted-fg mt-1.5">Sign in to manage inventory and boutique operations</p>
+        </div>
 
         {error && (
-          <div className="mb-5 rounded bg-red-100 border border-red-300 p-3 text-red-600">
+          <div className="mb-5 rounded-xl bg-red-50 border border-red-200 p-3 text-red-700 text-xs font-semibold">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-admin-muted-fg font-semibold mb-2">Email Address</label>
+            <input
+              type="email"
+              placeholder="admin@example.com"
+              className="w-full px-4 py-2.5 bg-admin-bg border border-admin-border rounded-xl focus:outline-none focus:border-admin-primary focus:ring-1 focus:ring-admin-primary text-admin-fg text-sm"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-          <input
-            type="email"
-            placeholder="Admin Email"
-            className="w-full border rounded-lg p-3"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full border rounded-lg p-3"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-admin-muted-fg font-semibold mb-2">Console Password</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              className="w-full px-4 py-2.5 bg-admin-bg border border-admin-border rounded-xl focus:outline-none focus:border-admin-primary focus:ring-1 focus:ring-admin-primary text-admin-fg text-sm"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
           <button
             disabled={loading}
-            className="w-full bg-[#4A0E17] text-white p-3 rounded-lg"
+            className="w-full bg-admin-primary hover:bg-[#833124] text-white font-semibold text-xs tracking-wider uppercase py-3.5 rounded-xl shadow-sm transition-all mt-4 disabled:opacity-50"
           >
-            {loading ? "Loading..." : "Login"}
+            {loading ? "Verifying..." : "Access Console"}
           </button>
-
         </form>
 
-        <div className="text-center mt-5">
-          <Link href="/login">
-            Customer Login
+        <div className="text-center mt-6 pt-5 border-t border-admin-border">
+          <Link href="/login" className="text-xs text-admin-primary hover:underline font-semibold">
+            ← Go to Customer Login
           </Link>
         </div>
 

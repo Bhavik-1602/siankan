@@ -34,7 +34,10 @@ export const productSchema = validateRequest(Joi.object({
   image_url: Joi.string().required(),
   zoom_image_url: Joi.string().allow('', null),
   is_featured: Joi.boolean().default(false),
-  artisan_notes: Joi.string().allow('', null)
+  artisan_notes: Joi.string().allow('', null),
+  discount_price: Joi.number().min(0).allow(null),
+  stock: Joi.number().integer().min(0).default(0),
+  slug: Joi.string().allow('', null)
 }));
 
 export const orderSchema = validateRequest(Joi.object({

@@ -10,6 +10,12 @@ import { useApp } from '../lib/AppContext';
 export default function Navbar() {
   const pathname = usePathname();
   const { cart, user } = useApp();
+
+  // Hide navbar on admin pages
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
+
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -25,16 +31,14 @@ export default function Navbar() {
     { href: '/contact', label: 'Contact' }
   ];
 
+
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (

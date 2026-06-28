@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@/lib/AppContext';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { getProducts, createProduct, updateProduct, deleteProduct, getCategories } from '@/lib/supabaseClient';
 
 export default function AdminProductsPage() {
@@ -14,7 +13,6 @@ export default function AdminProductsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Form states
   const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -31,32 +29,20 @@ export default function AdminProductsPage() {
   const [artisanNotes, setArtisanNotes] = useState('');
   const [slug, setSlug] = useState('');
 
-  // Verify Admin Session
   useEffect(() => {
     if (!authLoading) {
-      if (!user) {
-        router.push('/admin/login');
-      } else {
-        const isAdmin = user.role === 'admin' || user.email?.startsWith('admin@') || user.user_metadata?.role === 'admin';
-        if (!isAdmin) {
-          router.push('/login');
-        }
-      }
+      if (!user) { router.push('/admin/login'); return; }
+      const isAdmin = user.role === 'admin' || user.email?.startsWith('admin@') || user.user_metadata?.role === 'admin';
+      if (!isAdmin) router.push('/login');
     }
   }, [user, authLoading, router]);
 
   useEffect(() => {
     if (user) {
       setLoading(true);
-      Promise.all([
-        getProducts(),
-        getCategories(true)
-      ]).then(([prods, cats]) => {
-        setProducts(prods || []);
-        setCategories(cats || []);
-        if (cats && cats.length > 0) {
-          setCategory(cats[0].name);
-        }
+      Promise.all([getProducts(), getCategories(true)]).then(([prods, cats]) => {
+        setProducts(prods || []); setCategories(cats || []);
+        if (cats?.length > 0) setCategory(cats[0].name);
         setLoading(false);
       });
     }
@@ -68,361 +54,142 @@ export default function AdminProductsPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    const colors = colorsInput.split(',').map(c => c.trim()).filter(c => c.length > 0);
-    const payload = {
-      name,
-      description,
-      price: parseFloat(price),
-      discount_price: discountPrice ? parseFloat(discountPrice) : null,
-      category,
-      fabric,
-      colors,
-      embroidery,
-      image_url: imageUrl,
-      zoom_image_url: zoomImageUrl || null,
-      stock: parseInt(stock),
-      is_featured: isFeatured,
-      artisan_notes: artisanNotes || null,
-      slug
-    };
-
+    e.preventDefault(); setError(null);
+    const colors = colorsInput.split(',').map(c => c.trim()).filter(Boolean);
+    const payload = { name, description, price: parseFloat(price), discount_price: discountPrice ? parseFloat(discountPrice) : null, category, fabric, colors, embroidery, image_url: imageUrl, zoom_image_url: zoomImageUrl || null, stock: parseInt(stock), is_featured: isFeatured, artisan_notes: artisanNotes || null, slug };
     try {
       if (editingId) {
         const res = await updateProduct(editingId, payload as any);
-
-        if (res && res.success) {
-          setProducts(products.map(p => p.id === editingId ? res.product : p));
-          resetForm();
-        }
+        if (res?.success) { setProducts(products.map(p => p.id === editingId ? res.product : p)); resetForm(); }
       } else {
-        // Create product
         const res = await createProduct(payload as any);
-        if (res && res.success) {
-          setProducts([res.product, ...products]);
-          resetForm();
-        } else {
-          setError('Failed to create product.');
-        }
+        if (res?.success) { setProducts([res.product, ...products]); resetForm(); }
+        else setError('Failed to create product.');
       }
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during submission.');
-    }
+    } catch (err: any) { setError(err.message || 'An error occurred.'); }
   };
 
   const handleEditClick = (p: any) => {
-    setEditingId(p.id);
-    setName(p.name);
-    setSlug(p.slug || '');
-    setDescription(p.description || '');
-    setPrice(p.price.toString());
-    setDiscountPrice(p.discount_price ? p.discount_price.toString() : '');
-    setCategory(p.category);
-    setFabric(p.fabric || '');
-    setColorsInput(p.colors ? p.colors.join(', ') : '');
-    setEmbroidery(p.embroidery || '');
-    setImageUrl(p.image_url);
-    setZoomImageUrl(p.zoom_image_url || '');
-    setStock((p.stock || 0).toString());
-    setIsFeatured(!!p.is_featured);
-    setArtisanNotes(p.artisan_notes || '');
+    setEditingId(p.id); setName(p.name); setSlug(p.slug || ''); setDescription(p.description || '');
+    setPrice(p.price.toString()); setDiscountPrice(p.discount_price ? p.discount_price.toString() : '');
+    setCategory(p.category); setFabric(p.fabric || ''); setColorsInput(p.colors ? p.colors.join(', ') : '');
+    setEmbroidery(p.embroidery || ''); setImageUrl(p.image_url); setZoomImageUrl(p.zoom_image_url || '');
+    setStock((p.stock || 0).toString()); setIsFeatured(!!p.is_featured); setArtisanNotes(p.artisan_notes || '');
   };
 
   const handleDeleteClick = async (id: string) => {
-    if (confirm('Are you sure you want to delete this product?')) {
-      const res = await deleteProduct(id);
-      if (res.success) {
-        setProducts(products.filter(p => p.id !== id));
-      } else {
-        setError('Failed to delete product.');
-      }
-    }
+    if (!confirm('Delete this product?')) return;
+    const res = await deleteProduct(id);
+    if (res.success) setProducts(products.filter(p => p.id !== id));
+    else setError('Failed to delete product.');
   };
 
   const resetForm = () => {
-    setEditingId(null);
-    setName('');
-    setDescription('');
-    setPrice('');
-    setDiscountPrice('');
+    setEditingId(null); setName(''); setDescription(''); setPrice(''); setDiscountPrice('');
     if (categories.length > 0) setCategory(categories[0].name);
-    setFabric('');
-    setColorsInput('');
-    setEmbroidery('');
-    setImageUrl('');
-    setZoomImageUrl('');
-    setStock('10');
-    setIsFeatured(false);
-    setArtisanNotes('');
-    setSlug('');
+    setFabric(''); setColorsInput(''); setEmbroidery(''); setImageUrl(''); setZoomImageUrl('');
+    setStock('10'); setIsFeatured(false); setArtisanNotes(''); setSlug('');
   };
 
-  if (authLoading || loading) {
-    return (
-      <div className="min-h-screen bg-[#FAF8F5] pt-32 flex items-center justify-center font-sans text-gray-500 text-sm">
-        Retrieving store product catalog...
-      </div>
-    );
-  }
+  if (authLoading || loading) return <div className="admin-loading">Loading product catalog…</div>;
+
+  const inp: React.CSSProperties = { width: '100%', padding: '10px 14px', background: 'oklch(0.977 0.008 85)', border: '1px solid oklch(0.9 0.012 80)', borderRadius: '10px', fontSize: '13px', color: 'oklch(0.22 0.012 60)', outline: 'none', boxSizing: 'border-box' };
+  const lbl: React.CSSProperties = { display: 'block', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'oklch(0.52 0.014 65)', marginBottom: '7px' };
 
   return (
-    <main className="min-h-screen bg-[#FAF8F5] pt-32 pb-20 px-4 max-w-7xl mx-auto font-sans">
-      <div className="flex justify-between items-center mb-8 border-b border-[#F5E6D3] pb-6">
-        <div>
-          <Link href="/admin/dashboard" className="text-xs text-[#D4AF37] hover:underline font-semibold uppercase tracking-widest">← Back to Dashboard</Link>
-          <h1 className="font-serif text-3xl text-[#4A0E17] font-medium mt-2 font-medium">Product Management</h1>
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1280px' }}>
+      <div>
+        <h1 className="admin-h1">Product Management</h1>
+        <p className="admin-subtitle">Manage your ethnic wear catalogue — create, edit, and organise listings.</p>
       </div>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-4 py-3 rounded-lg mb-6">
-          {error}
-        </div>
-      )}
+      {error && <div className="admin-error">{error}</div>}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Form Panel */}
-        <div className="bg-white/70 backdrop-blur-md border border-[#F5E6D3] rounded-xl p-6 shadow-sm self-start">
-          <h3 className="font-serif text-lg text-[#4A0E17] font-semibold mb-6">{editingId ? 'Edit Product' : 'Create Product'}</h3>
-          
-          <form onSubmit={handleSubmit} className="space-y-4 text-xs">
-            <div>
-              <label className="block uppercase text-gray-500 font-semibold mb-1">Product Name</label>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => handleNameChange(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-[#F5E6D3] rounded text-gray-800 focus:outline-none focus:border-[#D4AF37]"
-                placeholder="Blush Silk Saree"
-              />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px', alignItems: 'start' }}>
+
+        {/* Form */}
+        <section className="admin-panel">
+          <h3 className="admin-h2" style={{ marginBottom: '20px' }}>{editingId ? 'Edit Product' : 'Create Product'}</h3>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+
+            <div><label style={lbl}>Name</label><input type="text" required value={name} onChange={e => handleNameChange(e.target.value)} style={inp} placeholder="Crimson Kanjivaram Saree" /></div>
+            <div><label style={lbl}>Description</label><textarea required value={description} onChange={e => setDescription(e.target.value)} rows={3} style={{ ...inp, resize: 'vertical' }} placeholder="Describe the product…" /></div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div><label style={lbl}>Price (₹)</label><input type="number" required value={price} onChange={e => setPrice(e.target.value)} style={inp} placeholder="12000" /></div>
+              <div><label style={lbl}>Discount Price</label><input type="number" value={discountPrice} onChange={e => setDiscountPrice(e.target.value)} style={inp} placeholder="Optional" /></div>
             </div>
 
-            <div>
-              <label className="block uppercase text-gray-500 font-semibold mb-1">SEO Slug</label>
-              <input
-                type="text"
-                required
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-50 border border-[#F5E6D3] rounded text-gray-500 focus:outline-none"
-                placeholder="blush-silk-saree"
-              />
-            </div>
-
-            <div>
-              <label className="block uppercase text-gray-500 font-semibold mb-1">Description</label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={3}
-                className="w-full px-3 py-2 bg-white border border-[#F5E6D3] rounded text-gray-800 focus:outline-none focus:border-[#D4AF37]"
-                placeholder="Enter detailed description..."
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
-                <label className="block uppercase text-gray-500 font-semibold mb-1">Price (₹)</label>
-                <input
-                  type="number"
-                  required
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-[#F5E6D3] rounded text-gray-800 focus:outline-none focus:border-[#D4AF37]"
-                  placeholder="115000"
-                />
-              </div>
-              <div>
-                <label className="block uppercase text-gray-500 font-semibold mb-1">Discount Price (₹)</label>
-                <input
-                  type="number"
-                  value={discountPrice}
-                  onChange={(e) => setDiscountPrice(e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-[#F5E6D3] rounded text-gray-800 focus:outline-none focus:border-[#D4AF37]"
-                  placeholder="Optional"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block uppercase text-gray-500 font-semibold mb-1">Category</label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-[#F5E6D3] rounded text-gray-800 focus:outline-none"
-                >
-                  {categories.map(c => (
-                    <option key={c.id} value={c.name}>{c.name}</option>
-                  ))}
-                  {categories.length === 0 && <option value="pastel">pastel</option>}
+                <label style={lbl}>Category</label>
+                <select value={category} onChange={e => setCategory(e.target.value)} style={{ ...inp, cursor: 'pointer' }}>
+                  {categories.map(cat => <option key={cat.id} value={cat.name}>{cat.name}</option>)}
                 </select>
               </div>
-              <div>
-                <label className="block uppercase text-gray-500 font-semibold mb-1">Fabric</label>
-                <input
-                  type="text"
-                  value={fabric}
-                  onChange={(e) => setFabric(e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-[#F5E6D3] rounded text-gray-800 focus:outline-none"
-                  placeholder="Raw Silk"
-                />
-              </div>
+              <div><label style={lbl}>Stock Qty</label><input type="number" required min="0" value={stock} onChange={e => setStock(e.target.value)} style={inp} /></div>
             </div>
 
-            <div>
-              <label className="block uppercase text-gray-500 font-semibold mb-1">Colors (Comma separated)</label>
-              <input
-                type="text"
-                value={colorsInput}
-                onChange={(e) => setColorsInput(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-[#F5E6D3] rounded text-gray-800 focus:outline-none"
-                placeholder="Blush Pink, Sage Green"
-              />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div><label style={lbl}>Fabric</label><input type="text" value={fabric} onChange={e => setFabric(e.target.value)} style={inp} placeholder="Pure Katan Silk" /></div>
+              <div><label style={lbl}>Embroidery</label><input type="text" value={embroidery} onChange={e => setEmbroidery(e.target.value)} style={inp} placeholder="Zardosi Handwork" /></div>
             </div>
 
-            <div>
-              <label className="block uppercase text-gray-500 font-semibold mb-1">Embroidery / Embellishment</label>
-              <input
-                type="text"
-                value={embroidery}
-                onChange={(e) => setEmbroidery(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-[#F5E6D3] rounded text-gray-800 focus:outline-none"
-                placeholder="Zardosi"
-              />
+            <div><label style={lbl}>Colours (comma-separated)</label><input type="text" value={colorsInput} onChange={e => setColorsInput(e.target.value)} style={inp} placeholder="Blush Pink, Mint Green" /></div>
+            <div><label style={lbl}>Main Image URL</label><input type="text" required value={imageUrl} onChange={e => setImageUrl(e.target.value)} style={inp} placeholder="https://…" /></div>
+            <div><label style={lbl}>Zoom / Detail Image URL</label><input type="text" value={zoomImageUrl} onChange={e => setZoomImageUrl(e.target.value)} style={inp} placeholder="https://…" /></div>
+            <div><label style={lbl}>Artisan Story Notes</label><textarea value={artisanNotes} onChange={e => setArtisanNotes(e.target.value)} rows={2} style={{ ...inp, resize: 'vertical' }} placeholder="Handcrafted over 14 days…" /></div>
+            <div><label style={lbl}>URL Slug</label><input type="text" required value={slug} onChange={e => setSlug(e.target.value)} style={{ ...inp, background: 'oklch(0.945 0.01 82)', color: 'oklch(0.52 0.014 65)' }} placeholder="crimson-kanjivaram-saree" /></div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingTop: '4px' }}>
+              <input type="checkbox" id="isFeatured" checked={isFeatured} onChange={e => setIsFeatured(e.target.checked)} style={{ width: '16px', height: '16px', accentColor: 'oklch(0.59 0.155 42)', cursor: 'pointer' }} />
+              <label htmlFor="isFeatured" style={{ fontSize: '12px', color: 'oklch(0.22 0.012 60)', cursor: 'pointer' }}>Pin / Feature on Homepage</label>
             </div>
 
-            <div>
-              <label className="block uppercase text-gray-500 font-semibold mb-1">Stock Level</label>
-              <input
-                type="number"
-                required
-                value={stock}
-                onChange={(e) => setStock(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-[#F5E6D3] rounded text-gray-800 focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block uppercase text-gray-500 font-semibold mb-1">Image URL</label>
-              <input
-                type="text"
-                required
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-[#F5E6D3] rounded text-gray-800 focus:outline-none"
-                placeholder="https://images.unsplash.com/..."
-              />
-            </div>
-
-            <div>
-              <label className="block uppercase text-gray-500 font-semibold mb-1">Zoom Fabric Details URL (Optional)</label>
-              <input
-                type="text"
-                value={zoomImageUrl}
-                onChange={(e) => setZoomImageUrl(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-[#F5E6D3] rounded text-gray-800 focus:outline-none"
-                placeholder="High-res details image URL"
-              />
-            </div>
-
-            <div>
-              <label className="block uppercase text-gray-500 font-semibold mb-1">Artisan Story Notes</label>
-              <textarea
-                value={artisanNotes}
-                onChange={(e) => setArtisanNotes(e.target.value)}
-                rows={2}
-                className="w-full px-3 py-2 bg-white border border-[#F5E6D3] rounded text-gray-800 focus:outline-none"
-                placeholder="Karigar names, weave hours..."
-              />
-            </div>
-
-            <div className="flex items-center gap-2 pt-2">
-              <input
-                type="checkbox"
-                id="pFeatured"
-                checked={isFeatured}
-                onChange={(e) => setIsFeatured(e.target.checked)}
-                className="rounded border-[#F5E6D3] text-[#4A0E17] focus:ring-[#D4AF37]"
-              />
-              <label htmlFor="pFeatured" className="text-gray-600 cursor-pointer font-semibold uppercase">Feature on Homepage</label>
-            </div>
-
-            <div className="flex gap-3 pt-4">
-              <button
-                type="submit"
-                className="flex-1 py-3 bg-[#4A0E17] hover:bg-[#5C1620] text-white font-medium tracking-wider uppercase rounded-lg shadow-sm transition-all"
-              >
-                {editingId ? 'Update' : 'Create'}
-              </button>
-              {editingId && (
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="px-4 py-3 border border-gray-200 text-gray-500 hover:bg-gray-50 tracking-wider uppercase rounded-lg transition-all"
-                >
-                  Cancel
-                </button>
-              )}
+            <div style={{ display: 'flex', gap: '10px', paddingTop: '8px' }}>
+              <button type="submit" className="admin-btn-primary" style={{ flex: 1, padding: '11px' }}>{editingId ? 'Update Product' : 'Create Product'}</button>
+              {editingId && <button type="button" onClick={resetForm} className="admin-btn-ghost">Cancel</button>}
             </div>
           </form>
-        </div>
+        </section>
 
-        {/* Listing Panel */}
-        <div className="lg:col-span-2 bg-white/70 border border-[#F5E6D3] rounded-xl p-8 shadow-sm">
-          <h3 className="font-serif text-xl text-[#4A0E17] font-medium mb-6">Product Catalog</h3>
+        {/* Catalogue list */}
+        <section className="admin-panel">
+          <h3 className="admin-h2" style={{ marginBottom: '20px' }}>Storefront Catalogue <span style={{ fontFamily: 'var(--font-sans)', fontSize: '12px', fontWeight: 400, color: 'oklch(0.52 0.014 65)', marginLeft: '8px' }}>{products.length} products</span></h3>
           {products.length === 0 ? (
-            <p className="text-gray-400 text-sm py-4">No products found in catalog.</p>
+            <p style={{ fontSize: '13px', color: 'oklch(0.52 0.014 65)' }}>No products found in the catalog.</p>
           ) : (
-            <div className="space-y-4 max-h-[800px] overflow-y-auto pr-2">
-              {products.map((p) => (
-                <div key={p.id} className="flex gap-4 p-4 rounded-lg border border-gray-100 bg-white hover:shadow-sm transition-all items-center">
-                  <img
-                    src={p.image_url}
-                    alt={p.name}
-                    className="w-16 h-16 object-cover rounded border border-gray-150 bg-gray-50"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between">
-                      <h4 className="text-sm font-semibold text-gray-800 truncate">{p.name}</h4>
-                      <span className="text-xs font-serif text-[#4A0E17] font-bold">₹{p.price.toLocaleString()}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '800px', overflowY: 'auto' }} className="no-scrollbar">
+              {products.map(p => (
+                <div key={p.id} style={{ display: 'flex', gap: '14px', alignItems: 'center', padding: '14px', borderRadius: '12px', border: '1px solid oklch(0.9 0.012 80)', background: 'oklch(0.977 0.008 85)', transition: 'box-shadow 0.15s' }}
+                  onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 16px oklch(0.22 0.012 60 / 0.08)')}
+                  onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
+                  <img src={p.image_url} alt={p.name} style={{ width: '56px', height: '56px', objectFit: 'cover', borderRadius: '10px', border: '1px solid oklch(0.9 0.012 80)', background: 'oklch(0.995 0.004 90)', flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                      <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'oklch(0.22 0.012 60)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{p.name}</h4>
+                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                        <span style={{ fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 700, color: 'oklch(0.59 0.155 42)' }}>₹{p.price.toLocaleString('en-IN')}</span>
+                        {p.discount_price && <p style={{ fontSize: '10px', color: 'oklch(0.52 0.014 65)', textDecoration: 'line-through' }}>₹{p.discount_price.toLocaleString('en-IN')}</p>}
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-400 truncate mt-0.5">{p.description}</p>
-                    <div className="flex items-center gap-3 mt-2 text-[10px] uppercase font-bold text-gray-500 tracking-wider">
-                      <span>Cat: {p.category}</span>
-                      <span>•</span>
-                      <span>Stock: {p.stock || 0}</span>
-                      {p.is_featured && (
-                        <>
-                          <span>•</span>
-                          <span className="text-[#D4AF37]">Featured</span>
-                        </>
-                      )}
+                    <p style={{ fontSize: '12px', color: 'oklch(0.52 0.014 65)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '3px' }}>{p.description}</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+                      <span style={{ background: 'oklch(0.945 0.01 82)', color: 'oklch(0.22 0.012 60)', padding: '2px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{p.category}</span>
+                      <span style={{ fontSize: '10px', color: p.stock === 0 ? 'oklch(0.55 0.2 27)' : 'oklch(0.52 0.014 65)', fontWeight: 600 }}>Stock: {p.stock || 0}</span>
+                      {p.is_featured && <span style={{ fontSize: '10px', color: 'oklch(0.72 0.14 75)', fontWeight: 700 }}>★ Featured</span>}
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <button
-                      onClick={() => handleEditClick(p)}
-                      className="text-xs text-[#D4AF37] hover:underline"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(p.id)}
-                      className="text-xs text-red-600 hover:underline"
-                    >
-                      Delete
-                    </button>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flexShrink: 0 }}>
+                    <button onClick={() => handleEditClick(p)} style={{ fontSize: '12px', fontWeight: 600, color: 'oklch(0.59 0.155 42)', background: 'none', border: 'none', cursor: 'pointer' }}>Edit</button>
+                    <button onClick={() => handleDeleteClick(p.id)} style={{ fontSize: '12px', fontWeight: 600, color: 'oklch(0.55 0.2 27)', background: 'none', border: 'none', cursor: 'pointer' }}>Delete</button>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </section>
       </div>
-    </main>
+    </div>
   );
 }
