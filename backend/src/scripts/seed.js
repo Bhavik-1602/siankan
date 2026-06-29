@@ -94,135 +94,135 @@ const mockProducts = [
     artisan_notes: "Features our signature gold metal wire layout which has a classic antique-gold finish."
   },
   {
-  name: "Royal Crimson Bridal Lehenga",
-  description: "Luxurious bridal lehenga crafted with rich velvet and intricate zardosi embroidery.",
-  price: 185000.00,
-  category: "bridal",
-  fabric: "Velvet",
-  colors: ["Crimson Red", "Gold"],
-  embroidery: "Zardosi",
-  image_url: "https://images.unsplash.com/photo-1583391733981-849840b7c4f8?auto=format&fit=crop&w=800&q=80",
-  zoom_image_url: "https://images.unsplash.com/photo-1583391733981-849840b7c4f8?auto=format&fit=crop&w=1200&q=80",
-  is_featured: true,
-  artisan_notes: "Handcrafted by master artisans with over 180 hours of embroidery work."
-},
-{
-  name: "Ivory Pearl Reception Gown",
-  description: "Elegant reception gown with pearl embellishments and flowing silhouette.",
-  price: 95000.00,
-  category: "gown",
-  fabric: "Net",
-  colors: ["Ivory", "Pearl White"],
-  embroidery: "Pearl Work",
-  image_url: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80",
-  zoom_image_url: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=80",
-  is_featured: true,
-  artisan_notes: "Features hand-sewn pearl detailing across bodice and sleeves."
-},
-{
-  name: "Emerald Heritage Silk Saree",
-  description: "Traditional silk saree with rich emerald tones and gold woven motifs.",
-  price: 128000.00,
-  category: "saree",
-  fabric: "Kanjivaram Silk",
-  colors: ["Emerald Green", "Gold"],
-  embroidery: "Weaving",
-  image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
-  zoom_image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=80",
-  is_featured: false,
-  artisan_notes: "Woven using authentic South Indian silk weaving techniques."
-},
-{
-  name: "Rose Gold Cocktail Lehenga",
-  description: "Contemporary lehenga with sequin and bead embellishments for cocktail events.",
-  price: 67000.00,
-  category: "cocktail",
-  fabric: "Georgette",
-  colors: ["Rose Gold", "Blush Pink"],
-  embroidery: "Sequin Work",
-  image_url: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80",
-  zoom_image_url: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1200&q=80",
-  is_featured: true,
-  artisan_notes: "Designed for lightweight comfort and elegant evening styling."
-},
-{
-  name: "Midnight Blue Designer Gown",
-  description: "Sophisticated designer gown with crystal embellishments and dramatic flair.",
-  price: 89000.00,
-  category: "gown",
-  fabric: "Satin",
-  colors: ["Midnight Blue", "Silver"],
-  embroidery: "Crystal Work",
-  image_url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
-  zoom_image_url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80",
-  is_featured: false,
-  artisan_notes: "Premium imported crystals hand-applied throughout the design."
-},
-{
-  name: "Sunset Orange Bandhani Saree",
-  description: "Traditional Bandhani saree showcasing vibrant craftsmanship from Gujarat.",
-  price: 58000.00,
-  category: "traditional",
-  fabric: "Gajji Silk",
-  colors: ["Sunset Orange", "Yellow"],
-  embroidery: "Bandhani",
-  image_url: "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=80",
-  zoom_image_url: "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1200&q=80",
-  is_featured: true,
-  artisan_notes: "Hand-tied and dyed using centuries-old Bandhani techniques."
-},
-{
-  name: "Lavender Bloom Bridesmaid Lehenga",
-  description: "Graceful bridesmaid lehenga featuring floral embroidery and soft pastel hues.",
-  price: 76000.00,
-  category: "bridesmaid",
-  fabric: "Organza",
-  colors: ["Lavender", "Silver"],
-  embroidery: "Floral Thread Work",
-  image_url: "https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&w=800&q=80",
-  zoom_image_url: "https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&w=1200&q=80",
-  is_featured: false,
-  artisan_notes: "Perfect for destination weddings and luxury celebrations."
-},
-{
-  name: "Golden Radiance Choli",
-  description: "Statement choli featuring dense gold embroidery and mirror accents.",
-  price: 42000.00,
-  category: "festive",
-  fabric: "Raw Silk",
-  colors: ["Gold", "Champagne"],
-  embroidery: "Mirror Work",
-  image_url: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80",
-  zoom_image_url: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1200&q=80",
-  is_featured: true,
-  artisan_notes: "Features handcrafted mirrors and detailed finishing."
-},
-{
-  name: "Ruby Velvet Wedding Saree",
-  description: "Royal wedding saree crafted in luxurious velvet with intricate detailing.",
-  price: 155000.00,
-  category: "bridal",
-  fabric: "Velvet",
-  colors: ["Ruby Red", "Gold"],
-  embroidery: "Zardosi",
-  image_url: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
-  zoom_image_url: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80",
-  is_featured: true,
-  artisan_notes: "Inspired by royal Indian wedding traditions."
-},
-{
-  name: "Sky Blue Fusion Indo-Western Set",
-  description: "Modern Indo-Western ensemble blending traditional embroidery with contemporary cuts.",
-  price: 62000.00,
-  category: "indo-western",
-  fabric: "Crepe",
-  colors: ["Sky Blue", "Silver"],
-  embroidery: "Thread Work",
-  image_url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80",
-  zoom_image_url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80",
-  is_featured: false,
-  artisan_notes: "Ideal for engagement ceremonies and festive gatherings."
-}
+    name: "Royal Crimson Bridal Lehenga",
+    description: "Luxurious bridal lehenga crafted with rich velvet and intricate zardosi embroidery.",
+    price: 185000.00,
+    category: "bridal",
+    fabric: "Velvet",
+    colors: ["Crimson Red", "Gold"],
+    embroidery: "Zardosi",
+    image_url: "https://images.unsplash.com/photo-1583391733981-849840b7c4f8?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1583391733981-849840b7c4f8?auto=format&fit=crop&w=1200&q=80",
+    is_featured: true,
+    artisan_notes: "Handcrafted by master artisans with over 180 hours of embroidery work."
+  },
+  {
+    name: "Ivory Pearl Reception Gown",
+    description: "Elegant reception gown with pearl embellishments and flowing silhouette.",
+    price: 95000.00,
+    category: "gown",
+    fabric: "Net",
+    colors: ["Ivory", "Pearl White"],
+    embroidery: "Pearl Work",
+    image_url: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=80",
+    is_featured: true,
+    artisan_notes: "Features hand-sewn pearl detailing across bodice and sleeves."
+  },
+  {
+    name: "Emerald Heritage Silk Saree",
+    description: "Traditional silk saree with rich emerald tones and gold woven motifs.",
+    price: 128000.00,
+    category: "saree",
+    fabric: "Kanjivaram Silk",
+    colors: ["Emerald Green", "Gold"],
+    embroidery: "Weaving",
+    image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=80",
+    is_featured: false,
+    artisan_notes: "Woven using authentic South Indian silk weaving techniques."
+  },
+  {
+    name: "Rose Gold Cocktail Lehenga",
+    description: "Contemporary lehenga with sequin and bead embellishments for cocktail events.",
+    price: 67000.00,
+    category: "cocktail",
+    fabric: "Georgette",
+    colors: ["Rose Gold", "Blush Pink"],
+    embroidery: "Sequin Work",
+    image_url: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1200&q=80",
+    is_featured: true,
+    artisan_notes: "Designed for lightweight comfort and elegant evening styling."
+  },
+  {
+    name: "Midnight Blue Designer Gown",
+    description: "Sophisticated designer gown with crystal embellishments and dramatic flair.",
+    price: 89000.00,
+    category: "gown",
+    fabric: "Satin",
+    colors: ["Midnight Blue", "Silver"],
+    embroidery: "Crystal Work",
+    image_url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80",
+    is_featured: false,
+    artisan_notes: "Premium imported crystals hand-applied throughout the design."
+  },
+  {
+    name: "Sunset Orange Bandhani Saree",
+    description: "Traditional Bandhani saree showcasing vibrant craftsmanship from Gujarat.",
+    price: 58000.00,
+    category: "traditional",
+    fabric: "Gajji Silk",
+    colors: ["Sunset Orange", "Yellow"],
+    embroidery: "Bandhani",
+    image_url: "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1200&q=80",
+    is_featured: true,
+    artisan_notes: "Hand-tied and dyed using centuries-old Bandhani techniques."
+  },
+  {
+    name: "Lavender Bloom Bridesmaid Lehenga",
+    description: "Graceful bridesmaid lehenga featuring floral embroidery and soft pastel hues.",
+    price: 76000.00,
+    category: "bridesmaid",
+    fabric: "Organza",
+    colors: ["Lavender", "Silver"],
+    embroidery: "Floral Thread Work",
+    image_url: "https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&w=1200&q=80",
+    is_featured: false,
+    artisan_notes: "Perfect for destination weddings and luxury celebrations."
+  },
+  {
+    name: "Golden Radiance Choli",
+    description: "Statement choli featuring dense gold embroidery and mirror accents.",
+    price: 42000.00,
+    category: "festive",
+    fabric: "Raw Silk",
+    colors: ["Gold", "Champagne"],
+    embroidery: "Mirror Work",
+    image_url: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1200&q=80",
+    is_featured: true,
+    artisan_notes: "Features handcrafted mirrors and detailed finishing."
+  },
+  {
+    name: "Ruby Velvet Wedding Saree",
+    description: "Royal wedding saree crafted in luxurious velvet with intricate detailing.",
+    price: 155000.00,
+    category: "bridal",
+    fabric: "Velvet",
+    colors: ["Ruby Red", "Gold"],
+    embroidery: "Zardosi",
+    image_url: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80",
+    is_featured: true,
+    artisan_notes: "Inspired by royal Indian wedding traditions."
+  },
+  {
+    name: "Sky Blue Fusion Indo-Western Set",
+    description: "Modern Indo-Western ensemble blending traditional embroidery with contemporary cuts.",
+    price: 62000.00,
+    category: "indo-western",
+    fabric: "Crepe",
+    colors: ["Sky Blue", "Silver"],
+    embroidery: "Thread Work",
+    image_url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80",
+    is_featured: false,
+    artisan_notes: "Ideal for engagement ceremonies and festive gatherings."
+  }
 ];
 
 const seed = async () => {
@@ -257,18 +257,20 @@ const seed = async () => {
     logger.info('Products table is empty. Preparing data...');
 
     // 4️⃣ transform products
-    const fixedProducts = mockProducts.map((p) => ({
-      ...p,
+    const fixedProducts = mockProducts.map((p) => {
+      const { category, ...rest } = p;
 
-      // convert category slug → UUID
-      category_id: categoryMap[p.category],
+      return {
+        ...rest,
 
-      // auto slug
-      slug: p.name
-        .toLowerCase()
-        .replace(/ /g, '-')
-        .replace(/[^\w-]+/g, '')
-    }));
+        category_id: categoryMap[category],
+
+        slug: p.name
+          .toLowerCase()
+          .replace(/ /g, "-")
+          .replace(/[^\w-]+/g, "")
+      };
+    });
 
     // 5️⃣ insert into DB
     const { error: insertError } = await supabaseAdmin

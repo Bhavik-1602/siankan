@@ -11,11 +11,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const { cart, user } = useApp();
 
-  // Hide navbar on admin pages
-  if (pathname.startsWith("/admin")) {
-    return null;
-  }
-
+  // 1. Always define all Hooks at the very top
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -31,7 +27,6 @@ export default function Navbar() {
     { href: '/contact', label: 'Contact' }
   ];
 
-
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -40,6 +35,11 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // 2. Put your conditional early return AFTER all hooks
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <>
@@ -139,8 +139,6 @@ export default function Navbar() {
                 </Link>
               )}
 
-
-
               {/* Mobile Hamburger Menu Toggle */}
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
@@ -174,7 +172,6 @@ export default function Navbar() {
                 </Link>
               );
             })}
-
           </div>
         )}
       </header>
