@@ -17,13 +17,13 @@ export default function Home() {
       try {
         setLoading(true);
         // Load products
-        const res = await fetch('/api/products');
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/products`);
         if (!res.ok) throw new Error('Failed to load catalog');
         const products: Product[] = await res.json();
         setFeatured(products.filter(p => p.is_featured).slice(0, 3));
 
         // Load banners
-        const bannerRes = await fetch('/api/banners?activeOnly=true');
+        const bannerRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/banners?activeOnly=true`);
         if (bannerRes.ok) {
           const bannerData = await bannerRes.json();
           setBanners(bannerData || []);

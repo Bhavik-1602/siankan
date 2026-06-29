@@ -25,7 +25,7 @@ function CollectionsContent() {
     async function loadProducts() {
       setLoading(true);
       try {
-        const res = await fetch('/api/products');
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/products`);
         const data = await res.json();
         setProducts(data || []);
       } catch (err) {
@@ -36,7 +36,7 @@ function CollectionsContent() {
 
     async function loadMeta() {
       try {
-        const res = await fetch('/api/meta');
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/meta`);
         const meta = await res.json();
         setCategories(meta.categories || []);
         setFabrics(meta.fabrics || []);

@@ -1,5 +1,6 @@
 // Supabase Client Wrapper Redirecting to Node.js / Express.js Backend API
 import { Product } from './mockData';
+import { apiFetch } from './api';
 
 // Set isUsingMock to true to instruct Next.js Auth Context (AppContext.tsx)
 // to use the LocalStorage fallback path on page load (initializing user session from LocalStorage)
@@ -35,7 +36,7 @@ const getAuthHeaders = (isMultipart = false) => {
 
 export const getProducts = async (): Promise<Product[]> => {
   try {
-    const res = await fetch('/api/products');
+    const res = await apiFetch('/api/products');
     if (!res.ok) throw new Error('Failed to fetch products');
     return await res.json();
   } catch (err) {
@@ -46,7 +47,7 @@ export const getProducts = async (): Promise<Product[]> => {
 
 export const getProductById = async (id: string): Promise<Product | null> => {
   try {
-    const res = await fetch(`/api/products/${id}`);
+    const res = await apiFetch(`/api/products/${id}`);
     if (!res.ok) throw new Error(`Failed to fetch product ${id}`);
     return await res.json();
   } catch (err) {
@@ -57,7 +58,7 @@ export const getProductById = async (id: string): Promise<Product | null> => {
 
 export const createProduct = async (productData: Omit<Product, 'id' | 'created_at'>): Promise<{ success: boolean; product: Product }> => {
   try {
-    const res = await fetch('/api/products', {
+    const res = await apiFetch('/api/products', {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(productData)
@@ -154,7 +155,7 @@ export const createOrder = async (orderData: any, items: any[]): Promise<{ succe
 
 export const getOrders = async (userId: string): Promise<any[]> => {
   try {
-    const res = await fetch(`/api/orders/user/${userId}`, {
+    const res = await apiFetch(`/api/orders/user/${userId}`, {
       headers: getAuthHeaders()
     });
     if (!res.ok) throw new Error('Failed to fetch orders');
@@ -180,7 +181,7 @@ export const getAllOrders = async (): Promise<any[]> => {
 
 export const updateOrderStatus = async (orderId: string, status: string): Promise<{ success: boolean }> => {
   try {
-    const res = await fetch(`/api/orders/${orderId}/status`, {
+    const res = await apiFetch(`/api/orders/${orderId}/status`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({ status })
@@ -225,7 +226,7 @@ export const createInquiry = async (inquiryData: any): Promise<{ success: boolea
 
 export const getInquiries = async (userId: string): Promise<any[]> => {
   try {
-    const res = await fetch(`/api/inquiries/user/${userId}`, {
+    const res = await apiFetch(`/api/inquiries/user/${userId}`, {
       headers: getAuthHeaders()
     });
     if (!res.ok) throw new Error('Failed to fetch inquiries');
@@ -251,7 +252,7 @@ export const getAllInquiries = async (): Promise<any[]> => {
 
 export const updateInquiryStatus = async (inquiryId: string, status: string): Promise<{ success: boolean }> => {
   try {
-    const res = await fetch(`/api/inquiries/${inquiryId}/status`, {
+    const res = await apiFetch(`/api/inquiries/${inquiryId}/status`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({ status })
@@ -268,7 +269,7 @@ export const updateInquiryStatus = async (inquiryId: string, status: string): Pr
 
 export const signUp = async (email: string, password: string, fullName: string): Promise<any> => {
   try {
-    const res = await fetch('/api/auth/signup', {
+    const res = await apiFetch('/api/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, fullName })
@@ -294,7 +295,7 @@ export const signUp = async (email: string, password: string, fullName: string):
 
 export const signIn = async (email: string, password: string): Promise<any> => {
   try {
-    const res = await fetch('/api/auth/login', {
+    const res = await apiFetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -320,7 +321,7 @@ export const signIn = async (email: string, password: string): Promise<any> => {
 
 export const signOut = async (): Promise<any> => {
   try {
-    await fetch('/api/auth/logout', {
+    await apiFetch('/api/auth/logout', {
       method: 'POST',
       headers: getAuthHeaders()
     });
@@ -373,7 +374,7 @@ export const updateUserProfile = async (userId: string, profileData: any): Promi
 
 export const getCategories = async (activeOnly = false): Promise<any[]> => {
   try {
-    const res = await fetch(`/api/categories?activeOnly=${activeOnly}`);
+    const res = await apiFetch(`/api/categories?activeOnly=${activeOnly}`);
     if (!res.ok) throw new Error('Failed to fetch categories');
     return await res.json();
   } catch (err) {
@@ -384,7 +385,7 @@ export const getCategories = async (activeOnly = false): Promise<any[]> => {
 
 export const createCategory = async (categoryData: any): Promise<any> => {
   try {
-    const res = await fetch('/api/categories', {
+    const res = await apiFetch('/api/categories', {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(categoryData)
@@ -430,7 +431,7 @@ export const deleteCategory = async (id: string): Promise<boolean> => {
 
 export const getBanners = async (activeOnly = false): Promise<any[]> => {
   try {
-    const res = await fetch(`/api/banners?activeOnly=${activeOnly}`);
+    const res = await apiFetch(`/api/banners?activeOnly=${activeOnly}`);
     if (!res.ok) throw new Error('Failed to fetch banners');
     return await res.json();
   } catch (err) {
@@ -441,7 +442,7 @@ export const getBanners = async (activeOnly = false): Promise<any[]> => {
 
 export const createBanner = async (bannerData: any): Promise<any> => {
   try {
-    const res = await fetch('/api/banners', {
+    const res = await apiFetch('/api/banners', {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(bannerData)
@@ -487,7 +488,7 @@ export const deleteBanner = async (id: string): Promise<boolean> => {
 
 export const getWishlist = async (userId: string): Promise<any[]> => {
   try {
-    const res = await fetch(`/api/wishlist/user/${userId}`, {
+    const res = await apiFetch(`/api/wishlist/user/${userId}`, {
       headers: getAuthHeaders()
     });
     if (!res.ok) throw new Error('Failed to fetch wishlist');
@@ -500,7 +501,7 @@ export const getWishlist = async (userId: string): Promise<any[]> => {
 
 export const addToWishlist = async (productId: string): Promise<any> => {
   try {
-    const res = await fetch('/api/wishlist', {
+    const res = await apiFetch('/api/wishlist', {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ product_id: productId })
@@ -515,7 +516,7 @@ export const addToWishlist = async (productId: string): Promise<any> => {
 
 export const removeFromWishlist = async (productId: string): Promise<boolean> => {
   try {
-    const res = await fetch(`/api/wishlist/${productId}`, {
+    const res = await apiFetch(`/api/wishlist/${productId}`, {
       method: 'DELETE',
       headers: getAuthHeaders()
     });
@@ -531,7 +532,7 @@ export const removeFromWishlist = async (productId: string): Promise<boolean> =>
 
 export const getAddresses = async (userId: string): Promise<any[]> => {
   try {
-    const res = await fetch(`/api/users/addresses/${userId}`, {
+    const res = await apiFetch(`/api/users/addresses/${userId}`, {
       headers: getAuthHeaders()
     });
     if (!res.ok) throw new Error('Failed to fetch addresses');
@@ -544,7 +545,7 @@ export const getAddresses = async (userId: string): Promise<any[]> => {
 
 export const createAddress = async (addressData: any): Promise<any> => {
   try {
-    const res = await fetch('/api/users/addresses', {
+    const res = await apiFetch('/api/users/addresses', {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(addressData)
@@ -590,7 +591,7 @@ export const deleteAddress = async (id: string): Promise<boolean> => {
 
 export const getReviewsByProduct = async (productId: string): Promise<any[]> => {
   try {
-    const res = await fetch(`/api/reviews/product/${productId}`);
+    const res = await apiFetch(`/api/reviews/product/${productId}`);
     if (!res.ok) throw new Error('Failed to fetch reviews');
     return await res.json();
   } catch (err) {
@@ -601,7 +602,7 @@ export const getReviewsByProduct = async (productId: string): Promise<any[]> => 
 
 export const createReview = async (reviewData: any): Promise<any> => {
   try {
-    const res = await fetch('/api/reviews', {
+    const res = await apiFetch('/api/reviews', {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(reviewData)
@@ -616,7 +617,7 @@ export const createReview = async (reviewData: any): Promise<any> => {
 
 export const deleteReview = async (id: string): Promise<boolean> => {
   try {
-    const res = await fetch(`/api/reviews/${id}`, {
+    const res = await apiFetch(`/api/reviews/${id}`, {
       method: 'DELETE',
       headers: getAuthHeaders()
     });
@@ -689,7 +690,7 @@ export const deleteCoupon = async (id: string): Promise<boolean> => {
 
 export const validateCoupon = async (code: string): Promise<any> => {
   try {
-    const res = await fetch('/api/coupons/validate', {
+    const res = await apiFetch('/api/coupons/validate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code })
@@ -709,7 +710,7 @@ export const validateCoupon = async (code: string): Promise<any> => {
 
 export const getAdminStats = async (): Promise<any> => {
   try {
-    const res = await fetch('/api/admin/stats', {
+    const res = await apiFetch('/api/admin/stats', {
       headers: getAuthHeaders()
     });
     if (!res.ok) throw new Error('Failed to fetch admin stats');

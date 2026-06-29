@@ -33,7 +33,7 @@ export default function ProductDetail() {
       if (!id || typeof id !== 'string') return;
       setLoading(true);
       try {
-        const res = await fetch(`/api/products/${id}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/products/${id}`);
         const data = await res.json();
         if (data) {
           setProduct(data);
