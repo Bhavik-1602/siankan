@@ -36,7 +36,7 @@ export const mockProducts: Product[] = [
     fabric: "Raw Silk",
     colors: ["Blush Pink", "Sage Green", "Cream"],
     embroidery: "Zardosi",
-    image_url: "/images/pastel_saree.png",
+    image_url: "/images/hero_image.jpg",
     zoom_image_url: "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=80",
     is_featured: true,
     artisan_notes: "Takes 140 hours of artisanal handloom weaving in Benares. Features silver-dipped gold threads for an editorial sheen.",

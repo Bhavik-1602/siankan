@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { AppProvider } from "../lib/AppContext";
+import PageTransition from "../components/PageTransition";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
@@ -39,7 +40,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <AppProvider>
           <Navbar />
           <main className="min-h-screen">
-            {children}
+            <PageTransition>
+              {children}
+            </PageTransition>
           </main>
           <Footer />
         </AppProvider>
@@ -47,3 +50,4 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     </html>
   );
 }
+

@@ -17,7 +17,7 @@ export default function Gallery() {
   const galleryItems: GalleryItem[] = [
     {
       id: 1,
-      src: "/images/pastel_saree.png",
+      src: "/images/hero_image.jpg",
       title: "Sage & Blush Weaving Portrait",
       category: "photoshoot",
       categoryLabel: "Fashion Photoshoot"
@@ -71,7 +71,7 @@ export default function Gallery() {
   ];
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 animate-fade-in-up">
+    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
       
       {/* Header */}
       <section className="text-center max-w-2xl mx-auto mb-16 space-y-4">

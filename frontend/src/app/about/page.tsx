@@ -6,7 +6,7 @@ import { Compass, Users, Sparkles } from 'lucide-react';
 
 export default function About() {
   return (
-    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 animate-fade-in-up">
+    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
       
       {/* Header Banner */}
       <section className="text-center max-w-2xl mx-auto mb-20 space-y-4">
@@ -47,7 +47,7 @@ export default function About() {
         {/* Brand Image showcase */}
         <div className="relative h-[440px] rounded-sm overflow-hidden border border-neutral-200/50 shadow-lg select-none">
           <img 
-            src="/images/pastel_saree.png" 
+            src="/images/hero_image.jpg" 
             alt="Artisans weaving silk threads" 
             className="w-full h-full object-cover"
           />

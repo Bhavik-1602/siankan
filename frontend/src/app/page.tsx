@@ -39,43 +39,44 @@ export default function Home() {
     loadData();
   }, []);
 
-  const activeBanner = banners.length > 0 ? banners[0] : {
-    title: "Pastel Luxury,",
-    subtitle: "Handcrafted Couture",
-    image_url: "/images/pastel_saree.png",
-    link_url: "/collections"
+  const activeBanner = {
+    title: banners.length > 0 ? banners[0].title : "The Lehenga Legacy,",
+    subtitle: banners.length > 0 ? banners[0].subtitle : "Handcrafted Couture",
+    image_url: "/images/hero_image.jpg",
+    link_url: banners.length > 0 ? banners[0].link_url : "/collections"
   };
 
   return (
-    <div className="animate-fade-in-up">
+    <div>
       
-      {/* Hero Section - Split Screen Editorial style */}
-      <section className="relative bg-neutral-950 text-neutral-100 min-h-[85vh] flex items-center overflow-hidden border-b border-gold-300/10">
+      {/* Hero Section - Full Screen Editorial Style */}
+      <section className="relative bg-neutral-950 text-neutral-100 min-h-screen flex items-center overflow-hidden border-b border-gold-300/10">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-maroon-700/10 via-transparent to-transparent z-10" />
         
-        {/* Background Image Panel */}
-        <div className="absolute right-0 top-0 h-full w-full lg:w-[50%] z-0 select-none">
-          <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/40 lg:via-neutral-950/20 to-transparent z-10" />
+        {/* Full Screen Background Image Panel */}
+        <div className="absolute inset-0 h-full w-full z-0 select-none overflow-hidden">
+          {/* Responsive overlay: solid dark tint on mobile, fade-to-black gradient on desktop */}
+          <div className="absolute inset-0 bg-neutral-950/60 lg:bg-gradient-to-r lg:from-neutral-950/95 lg:via-neutral-950/70 lg:to-transparent z-10" />
           <img 
             src={activeBanner.image_url} 
             alt={activeBanner.title} 
-            className="h-full w-full object-cover object-center animate-[zoomIn_1.5s_ease-out_forwards]"
+            className="h-full w-full object-cover object-[center_35%] animate-ken-burns"
           />
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full z-20 py-24">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full z-20 py-32">
           <div className="max-w-xl space-y-8">
-            <span className="text-[10px] font-bold tracking-[0.3em] text-gold-300 uppercase block">
+            <span className="text-[10px] font-bold tracking-[0.3em] text-gold-300 uppercase block opacity-0 animate-reveal-1">
               N & A Art of Design
             </span>
-            <h1 className="font-editorial text-4xl sm:text-5xl lg:text-6.5xl font-light tracking-wide text-[#FAF8F5] leading-[1.1] animate-fade-in-up">
+            <h1 className="font-editorial text-4xl sm:text-5xl lg:text-6.5xl font-light tracking-wide text-[#FAF8F5] leading-[1.1] opacity-0 animate-reveal-2">
               {activeBanner.title} <br/>
               <span className="text-maroon-200 font-normal italic">{activeBanner.subtitle}</span>
             </h1>
-            <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed max-w-md">
+            <p className="text-neutral-300 text-sm sm:text-base font-light leading-relaxed max-w-md opacity-0 animate-reveal-3">
               Discover our exclusive collections of pastel Banarasi sarees, custom-tailored designer cholis, festive wear, and bespoke bridesmaid lehengas.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row gap-4 pt-4 opacity-0 animate-reveal-3 [animation-delay:0.7s]">
               <Link 
                 href={activeBanner.link_url || "/collections"} 
                 className="bg-[#4A0E17] hover:bg-maroon-500 text-white text-[10px] font-bold tracking-[0.2em] uppercase py-4 px-8 transition-all text-center rounded-sm border border-[#4A0E17] hover:border-maroon-500 shadow-lg cursor-pointer"
@@ -109,7 +110,7 @@ export default function Home() {
           
           {/* Card 1: Pastel Saree */}
           <div className="relative h-[500px] rounded-sm overflow-hidden group shadow-lg border border-neutral-200/20">
-            <img src="/images/pastel_saree.png" alt="Pastel Collection" className="w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-105" />
+            <img src="/images/hero_image.jpg" alt="Pastel Collection" className="w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-transparent flex flex-col justify-end p-8 z-20" />
             <div className="absolute bottom-8 left-8 z-30 space-y-3">
               <h3 className="font-editorial text-2xl text-[#FAF8F5] font-light">Pastel Collection</h3>
