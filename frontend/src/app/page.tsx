@@ -87,8 +87,8 @@ export default function Home() {
   const featured = products.filter((p) => p.is_featured);
   
   // Fallbacks in case products list is empty
-  const heroImage = "/images/hero_image.jpg";
-  const storyImage = "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80";
+  const heroImage = "/images/group_2.jpg";
+  const storyImage = "/images/blue_dress_model.jpg";
 
   return (
     <div className="overflow-hidden bg-[#FAF8F5]">

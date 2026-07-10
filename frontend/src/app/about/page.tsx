@@ -3,9 +3,9 @@
 import React from 'react';
 
 export default function About() {
-  const storyImage = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1920&q=80";
-  const dishaImage = "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80";
-  const minjalImage = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80";
+  const storyImage = "/images/group_1.jpg";
+  const dishaImage = "/images/blue_dress_model.jpg";
+  const minjalImage = "/images/minjal.jpg";
 
   return (
     <div className="bg-[#FAF8F5] pb-24 text-neutral-800">

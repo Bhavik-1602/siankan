@@ -45,14 +45,14 @@ export default function Gallery() {
     },
     {
       id: 5,
-      src: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80",
+      src: "/images/minjal.jpg",
       title: "Pastel Gown alignment layout showcase",
       category: "showcase",
       categoryLabel: "Customer Showcase"
     },
     {
       id: 6,
-      src: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80",
+      src: "/images/blue_dress_model.jpg",
       title: "Bridesmaid champagne golden group photo",
       category: "showcase",
       categoryLabel: "Customer Showcase"

@@ -119,8 +119,8 @@ const mockProducts = [
     fabric: "Velvet",
     colors: ["Crimson Red", "Gold"],
     embroidery: "Zardosi",
-    image_url: "https://images.unsplash.com/photo-1583391733981-849840b7c4f8?auto=format&fit=crop&w=800&q=80",
-    zoom_image_url: "https://images.unsplash.com/photo-1583391733981-849840b7c4f8?auto=format&fit=crop&w=1200&q=80",
+    image_url: "https://images.unsplash.com/photo-1594552072238-b8a33785b261?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1594552072238-b8a33785b261?auto=format&fit=crop&w=1200&q=80",
     is_featured: true,
     artisan_notes: "Handcrafted by master artisans with over 180 hours of embroidery work."
   },
@@ -251,8 +251,8 @@ const mockProducts = [
     fabric: "Cotton Silk",
     colors: ["Lavender", "Ivory"],
     embroidery: "Mirror Work",
-    image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
-    zoom_image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=80",
+    image_url: "/images/disha.jpg",
+    zoom_image_url: "/images/disha.jpg",
     is_featured: true,
     artisan_notes: "Takes 90 hours of handloom dye and mirror work. Elegant and designed to flow."
   },
@@ -264,8 +264,8 @@ const mockProducts = [
     fabric: "Georgette",
     colors: ["Coral", "Ivory"],
     embroidery: "Mirror Work",
-    image_url: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80",
-    zoom_image_url: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1200&q=80",
+    image_url: "/images/kiran.jpg",
+    zoom_image_url: "/images/kiran.jpg",
     is_featured: true,
     artisan_notes: "Crafted in heavy georgette. Mirror embellishment on chest."
   },
@@ -277,8 +277,8 @@ const mockProducts = [
     fabric: "Cotton Silk",
     colors: ["Blush Pink"],
     embroidery: "Handwork",
-    image_url: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80",
-    zoom_image_url: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1200&q=80",
+    image_url: "/images/minjal.jpg",
+    zoom_image_url: "/images/minjal.jpg",
     is_featured: true,
     artisan_notes: "Features hand-painted lotus details."
   },
@@ -290,8 +290,8 @@ const mockProducts = [
     fabric: "Cotton Silk",
     colors: ["Mint Green", "Ivory"],
     embroidery: "Mirror Work",
-    image_url: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80",
-    zoom_image_url: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1200&q=80",
+    image_url: "/images/nehal.jpg",
+    zoom_image_url: "/images/nehal.jpg",
     is_featured: true,
     artisan_notes: "Features mirror work peplum panel."
   },
@@ -303,8 +303,8 @@ const mockProducts = [
     fabric: "Cotton Silk",
     colors: ["Rose Pink"],
     embroidery: "Mirror Work",
-    image_url: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80",
-    zoom_image_url: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1200&q=80",
+    image_url: "/images/sharddha.jpg",
+    zoom_image_url: "/images/sharddha.jpg",
     is_featured: false,
     artisan_notes: "Statement lotus appliqué."
   },
@@ -316,8 +316,8 @@ const mockProducts = [
     fabric: "Cotton Silk",
     colors: ["Ombré Trio"],
     embroidery: "Tie-Dye",
-    image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
-    zoom_image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=80",
+    image_url: "/images/group_1.jpg",
+    zoom_image_url: "/images/group_1.jpg",
     is_featured: false,
     artisan_notes: "Signature tie-dye anarkali."
   },
@@ -329,8 +329,8 @@ const mockProducts = [
     fabric: "Georgette",
     colors: ["Sky Blue", "Ivory"],
     embroidery: "Mirror Work",
-    image_url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
-    zoom_image_url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80",
+    image_url: "/images/blue_dress_model.jpg",
+    zoom_image_url: "/images/blue_dress_model.jpg",
     is_featured: true,
     artisan_notes: "Mirror-work bodice with twirling flare."
   },
@@ -342,8 +342,8 @@ const mockProducts = [
     fabric: "Cotton Silk",
     colors: ["Violet", "Ivory"],
     embroidery: "Coin Work",
-    image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
-    zoom_image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=80",
+    image_url: "/images/nisha.jpg",
+    zoom_image_url: "/images/nisha.jpg",
     is_featured: true,
     artisan_notes: "Features hand-dipped violet border."
   }
