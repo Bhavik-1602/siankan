@@ -21,6 +21,8 @@ interface AppContextType {
   cart: CartItem[];
   user: any;
   loading: boolean;
+  cartOpen: boolean;
+  setCartOpen: (o: boolean) => void;
   addToCart: (product: Product, quantity: number, customizations: any, selectedColor?: string) => void;
   updateCartQuantity: (productId: string, customizations: any, quantity: number) => void;
   removeFromCart: (productId: string, customizations: any) => void;
@@ -35,6 +37,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [cartOpen, setCartOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -228,6 +231,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       cart,
       user,
       loading,
+      cartOpen,
+      setCartOpen,
       addToCart,
       updateCartQuantity,
       removeFromCart,

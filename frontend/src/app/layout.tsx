@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { AppProvider } from "../lib/AppContext";
 import PageTransition from "../components/PageTransition";
+import SmoothScroll from "../components/SmoothScroll";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
@@ -27,8 +28,8 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "N&A Art of Design | Luxury Handcrafted Sarees & Designer Wear",
-  description: "Exclusive pastel Banarasi sarees, custom-tailored designer cholis, festive wear, and bespoke bridesmaid lehengas. Handcrafted luxury from artisans in Varanasi.",
+  title: "Siankan — Handcrafted Indian Wear | Luxury Sarees, Lehengas & Gowns",
+  description: "Siankan: hand-dyed lehengas, gowns and kurti sets. Small-batch contemporary Indian wear, made in India.",
   keywords: ["sarees", "banarasi", "handcrafted", "luxury wear", "designer choli", "lehenga", "festive wear"],
 };
 
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${cormorant.variable} ${spaceGrotesk.variable} ${dmSans.variable} antialiased`}
         style={{ background: '#FAF8F5', color: '#171717' }}>
         <AppProvider>
+          <SmoothScroll />
           <Navbar />
           <main className="min-h-screen">
             <PageTransition>

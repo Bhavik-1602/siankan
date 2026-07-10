@@ -1,180 +1,297 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag, User, Compass, Menu, X, Heart } from 'lucide-react';
+import { ShoppingBag, Menu, X, Search, User, Heart } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../lib/AppContext';
+import CartDrawer from './CartDrawer';
+
+type NavItem = {
+  href: string;
+  label: string;
+  panel?: {
+    heading: string;
+    tagline: string;
+    links: { label: string; href: string }[];
+  };
+};
+
+const navLinks: NavItem[] = [
+  { href: '/', label: 'Home' },
+  {
+    href: '/collections',
+    label: 'New Arrivals',
+    panel: {
+      heading: "Autumn / Winter '26",
+      tagline: "The newest hand-dyed pieces, fresh from the atelier.",
+      links: [
+        { label: "All new pieces", href: "/collections" },
+        { label: "Featured lehengas", href: "/collections?category=lehenga" },
+        { label: "Signature gowns", href: "/collections?category=gown" },
+      ],
+    },
+  },
+  {
+    href: '/collections',
+    label: 'Collections',
+    panel: {
+      heading: "Shop by silhouette",
+      tagline: "Every piece is crafted in small batches by hand.",
+      links: [
+        { label: "Lehengas", href: "/collections?category=lehenga" },
+        { label: "Gowns", href: "/collections?category=gown" },
+        { label: "Kurti Sets", href: "/collections?category=kurti-set" },
+        { label: "Anarkalis", href: "/collections?category=anarkali" },
+      ],
+    },
+  },
+  { href: '/about', label: 'Our Story' },
+  { href: '/contact', label: 'Ateliers' },
+];
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { cart, user } = useApp();
-
-  // 1. Always define all Hooks at the very top
+  const { cart, setCartOpen } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
-  // Total item count in shopping bag
-  const totalItemsCount = cart.reduce((total, item) => total + item.quantity, 0);
-
-  const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/collections', label: 'Collections' },
-    { href: '/services', label: 'Services' },
-    { href: '/gallery', label: 'Gallery' },
-    { href: '/about', label: 'Our Story' },
-    { href: '/contact', label: 'Contact' }
-  ];
+  const [hovered, setHovered] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 12);
     };
-
-    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 2. Put your conditional early return AFTER all hooks
-  if (pathname.startsWith("/admin")) {
+  const totalItemsCount = cart.reduce((total, item) => total + item.quantity, 0);
+
+  if (pathname?.startsWith('/admin')) {
     return null;
   }
 
   return (
     <>
-      <header className={`sticky top-0 z-50 w-full transition-all duration-500 ${
-        scrolled 
-          ? 'bg-[#FAF8F5]/90 backdrop-blur-md border-b border-gold-300/20 py-2 shadow-[0_4px_30px_rgba(0,0,0,0.02)]' 
-          : 'bg-[#F5E6D3] border-b border-[#D4AF37]/30 py-4'
-      }`}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 sm:h-20 items-center justify-between">
-            
-            {/* Logo Brand */}
-            <Link href="/" className="flex items-center group flex-shrink-0">
-              <div className="flex items-center pl-2 transition-transform duration-300 group-hover:scale-[1.02]">
-                <Image 
-                  src="/logo.jpeg"  
-                  alt="SIANKAN Logo" 
-                  width={200}     
-                  height={80}       
-                  className="h-14 sm:h-16 w-auto object-contain mix-blend-multiply scale-110 origin-left" 
-                  priority
-                />
-              </div>
-            </Link>
+      <motion.header
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        onMouseLeave={() => setHovered(null)}
+        className={`sticky top-0 z-40 border-b transition-all duration-500 ${
+          scrolled
+            ? 'border-white/10 bg-neutral-950/95 backdrop-blur-lg text-white shadow-lg'
+            : 'border-transparent bg-neutral-950 text-white'
+        }`}
+      >
+        {/* Announcement Bar */}
+        <div className="overflow-hidden border-b border-white/10 bg-[#FAF8F5] text-neutral-900">
+          <motion.div
+            initial={{ x: "0%" }}
+            animate={{ x: "-50%" }}
+            transition={{ duration: 25, ease: "linear", repeat: Infinity }}
+            className="flex whitespace-nowrap py-2.5 text-[9px] font-bold uppercase tracking-[0.32em]"
+            style={{ width: "max-content" }}
+          >
+            {Array.from({ length: 4 }).map((_, i) => (
+              <span key={i} className="inline-flex items-center gap-4 px-8">
+                <span>✦</span>
+                Complimentary shipping across India
+                <span>✦</span>
+                Handcrafted in small batches
+                <span>✦</span>
+                Made to order in 10–14 days
+              </span>
+            ))}
+          </motion.div>
+        </div>
 
-            {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center space-x-8 xl:space-x-10 flex-1 justify-center px-6">
-              {navLinks.map(link => {
-                const isActive = pathname === link.href;
+        {/* Navigation Wrapper */}
+        <div
+          className={`mx-auto flex max-w-7xl items-center justify-between px-6 transition-all duration-500 ${
+            scrolled ? 'h-16' : 'h-24'
+          }`}
+        >
+          {/* Logo Brand */}
+          <Link href="/" className="group flex items-center gap-3">
+            <motion.img
+              whileHover={{ rotate: 8, scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 260, damping: 18 }}
+              src="/logo.jpeg"
+              alt="SIANKAN"
+              className={`shrink-0 object-contain invert brightness-0 transition-all duration-500 ${
+                scrolled ? 'h-9 w-9' : 'h-12 w-12'
+              }`}
+            />
+            <div className="hidden min-w-0 flex-col items-center leading-none md:flex">
+              <span
+                className={`truncate font-display tracking-[0.32em] text-[#FAF8F5] transition-all duration-500 ${
+                  scrolled ? 'text-base' : 'text-xl'
+                }`}
+              >
+                SIANKAN
+              </span>
+              <span className="mt-1 hidden text-[8px] uppercase tracking-[0.42em] text-white/50 lg:block">
+                Maison — Est. 2019
+              </span>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation Links */}
+          <div className="flex items-center gap-2">
+            <nav className="hidden items-center gap-2 md:flex">
+              {navLinks.map((item) => {
+                const isActive = pathname === item.href;
                 return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`relative text-[11px] font-medium tracking-[0.2em] uppercase transition-colors duration-300 pb-1.5 group ${
-                      isActive 
-                        ? 'text-maroon-600 font-bold' 
-                        : 'text-neutral-500 hover:text-maroon-600'
-                    }`}
+                  <div
+                    key={item.label}
+                    className="relative px-4 py-2"
+                    onMouseEnter={() => setHovered(item.label)}
                   >
-                    {link.label}
-                    {/* Active line */}
-                    <span className={`absolute bottom-0 left-0 h-[1.5px] bg-gold-300 transition-all duration-300 ${
-                      isActive ? 'w-full' : 'w-0 group-hover:w-full'
-                    }`} />
-                  </Link>
+                    <Link
+                      href={item.href}
+                      className={`text-[10px] font-semibold uppercase tracking-[0.25em] transition-colors hover:text-[#FAF8F5] ${
+                        isActive ? 'text-white' : 'text-white/60'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </div>
                 );
               })}
             </nav>
 
             {/* Right Action Icons */}
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              
-              {/* Wishlist Link */}
+            <div className="flex items-center space-x-1">
+              <Link 
+                href="/collections" 
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                aria-label="Search"
+              >
+                <Search className="h-[18px] w-[18px]" strokeWidth={1.4} />
+              </Link>
+              <Link 
+                href="/profile" 
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+                aria-label="Account"
+              >
+                <User className="h-[18px] w-[18px]" strokeWidth={1.4} />
+              </Link>
               <Link 
                 href="/wishlist" 
-                className="relative p-2 text-neutral-600 hover:text-maroon-600 transition-colors duration-300 rounded-full hover:bg-neutral-100/50"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors"
                 aria-label="Wishlist"
-                title="Wishlist"
               >
-                <Heart size={20} strokeWidth={1.5} />
+                <Heart className="h-[18px] w-[18px]" strokeWidth={1.4} />
               </Link>
 
-              {/* Cart Icon */}
-              <Link 
-                href="/cart" 
-                className="relative p-2 text-neutral-600 hover:text-maroon-600 transition-colors duration-300 rounded-full hover:bg-neutral-100/50"
-                aria-label="Shopping Cart"
-                title="Shopping Cart"
+              {/* Cart Toggle */}
+              <button
+                onClick={() => setCartOpen(true)}
+                className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10"
+                aria-label="Open cart"
               >
-                <ShoppingBag size={20} strokeWidth={1.5} />
-                {totalItemsCount > 0 && (
-                  <span className="absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-gold-300 text-[8px] font-bold text-white ring-2 ring-white">
-                    {totalItemsCount}
-                  </span>
-                )}
-              </Link>
+                <ShoppingBag className="h-[18px] w-[18px]" strokeWidth={1.4} />
+                <AnimatePresence>
+                  {totalItemsCount > 0 && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[9px] font-bold text-neutral-900"
+                    >
+                      {totalItemsCount}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </button>
 
-              {/* Profile Icon / Account Info */}
-              {user ? (
-                <Link 
-                  href="/profile" 
-                  className="flex items-center space-x-1.5 border border-gold-300/40 hover:border-gold-300 px-2.5 py-1.5 rounded-sm hover:bg-gold-50/50 transition-all duration-300"
-                  title="Profile"
-                >
-                  <User size={15} className="text-maroon-600" strokeWidth={1.8} />
-                  <span className="hidden md:inline text-[9px] font-bold tracking-widest text-maroon-600 uppercase max-w-[65px] overflow-hidden text-ellipsis whitespace-nowrap">
-                    {user.user_metadata?.full_name?.split(' ')[0] || 'Account'}
-                  </span>
-                </Link>
-              ) : (
-                <Link 
-                  href="/login" 
-                  className="p-2 text-neutral-600 hover:text-maroon-600 transition-colors duration-300 rounded-full hover:bg-neutral-100/50"
-                  title="Sign In"
-                >
-                  <User size={20} strokeWidth={1.5} />
-                </Link>
-              )}
-
-              {/* Mobile Hamburger Menu Toggle */}
+              {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="p-2 text-neutral-600 hover:text-maroon-600 lg:hidden rounded-full transition-colors duration-300 hover:bg-neutral-100/50"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10 transition-colors md:hidden"
                 aria-label="Toggle Menu"
               >
-                {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+                {mobileOpen ? (
+                  <X className="h-5 w-5" />
+                ) : (
+                  <Menu className="h-5 w-5" />
+                )}
               </button>
             </div>
-
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer */}
-        {mobileOpen && (
-          <div className="lg:hidden border-t border-gold-100 bg-[#FAF8F5] px-4 py-4 space-y-1.5 shadow-lg animate-in fade-in slide-in-from-top duration-300">
-            {navLinks.map(link => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`block px-4 py-2 text-[11px] font-semibold tracking-widest uppercase rounded-sm transition-colors duration-300 ${
-                    isActive 
-                      ? 'bg-gold-50 text-maroon-600 border-l-2 border-gold-300' 
-                      : 'text-neutral-600 hover:bg-neutral-50 hover:text-maroon-600'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </header>
+        {/* Megamenu Panels for Hover */}
+        <AnimatePresence>
+          {hovered && navLinks.find((n) => n.label === hovered)?.panel && (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 15 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute left-0 top-full w-full bg-neutral-950 border-b border-white/10 text-white"
+            >
+              <div className="mx-auto grid max-w-7xl grid-cols-12 gap-8 px-8 py-10">
+                <div className="col-span-4">
+                  <h4 className="font-editorial text-2xl font-light leading-snug">
+                    {navLinks.find((n) => n.label === hovered)?.panel?.heading}
+                  </h4>
+                  <p className="mt-3 text-xs text-white/50 leading-relaxed max-w-xs font-light">
+                    {navLinks.find((n) => n.label === hovered)?.panel?.tagline}
+                  </p>
+                </div>
+                <div className="col-span-8 grid grid-cols-2 gap-4">
+                  {navLinks
+                    .find((n) => n.label === hovered)
+                    ?.panel?.links.map((link) => (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        onClick={() => setHovered(null)}
+                        className="group flex flex-col justify-center border-l border-white/10 pl-6 py-2 hover:bg-white/[0.02] transition-colors"
+                      >
+                        <span className="text-xs uppercase tracking-widest text-white transition-colors group-hover:text-maroon-400">
+                          {link.label}
+                        </span>
+                      </Link>
+                    ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile Menu Panel */}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="border-t border-white/10 bg-neutral-950 text-white md:hidden"
+            >
+              <nav className="flex flex-col gap-4 px-6 py-6 font-display text-sm tracking-widest">
+                {navLinks.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="hover:text-maroon-400 transition-colors uppercase text-xs"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.header>
+
+      {/* Slide-out Cart Drawer */}
+      <CartDrawer />
     </>
   );
 }

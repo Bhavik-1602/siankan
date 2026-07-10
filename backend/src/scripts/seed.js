@@ -1,7 +1,25 @@
 import { supabaseAdmin } from '../config/supabase.js';
 import { logger } from '../utils/logger.js';
 
+const requiredCategories = [
+  { name: "Saree", slug: "saree" },
+  { name: "Cocktail", slug: "cocktail" },
+  { name: "Gown", slug: "gown" },
+  { name: "Bridal", slug: "bridal" },
+  { name: "Festive Wear", slug: "festive" },
+  { name: "Pastel Wear", slug: "pastel" },
+  { name: "Choli", slug: "choli" },
+  { name: "Lehenga", slug: "lehenga" },
+  { name: "Kurti Set", slug: "kurti-set" },
+  { name: "Anarkali", slug: "anarkali" },
+  { name: "Garba Wear", slug: "garba" },
+  { name: "Indo-Western", slug: "indo-western" },
+  { name: "Bridesmaid Lehenga", slug: "bridesmaid" },
+  { name: "Traditional Wear", slug: "traditional" }
+];
+
 const mockProducts = [
+  // Original products
   {
     name: "Blush & Sage Banarasi Silk Saree",
     description: "An elegant, pastel-themed Banarasi saree handwoven in premium raw silk. Features delicate sage green border motifs and a soft blush pink body designed to reflect luxury sophistication.",
@@ -222,6 +240,112 @@ const mockProducts = [
     zoom_image_url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80",
     is_featured: false,
     artisan_notes: "Ideal for engagement ceremonies and festive gatherings."
+  },
+
+  // New products from the Chic Style Studio zip file
+  {
+    name: "Aasha Lavender Mirror Lehenga",
+    description: "Hand-dyed lavender ombré lehenga with mirror-work bodice and flowing ivory skirt. A soft, celebratory piece cut for movement.",
+    price: 8499.00,
+    category: "lehenga",
+    fabric: "Cotton Silk",
+    colors: ["Lavender", "Ivory"],
+    embroidery: "Mirror Work",
+    image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=80",
+    is_featured: true,
+    artisan_notes: "Takes 90 hours of handloom dye and mirror work. Elegant and designed to flow."
+  },
+  {
+    name: "Surya Coral Tie-Dye Gown",
+    description: "Coral-and-ivory tie-dye gown with sculpted peplum and mirror embellishment. Warm, sun-kissed, easy to wear.",
+    price: 6299.00,
+    category: "gown",
+    fabric: "Georgette",
+    colors: ["Coral", "Ivory"],
+    embroidery: "Mirror Work",
+    image_url: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1200&q=80",
+    is_featured: true,
+    artisan_notes: "Crafted in heavy georgette. Mirror embellishment on chest."
+  },
+  {
+    name: "Mira Blush Floral Lehenga",
+    description: "Hand-painted lotus motifs on soft blush cotton silk, finished with pearl tassels and mirror pearl neckline.",
+    price: 9899.00,
+    category: "lehenga",
+    fabric: "Cotton Silk",
+    colors: ["Blush Pink"],
+    embroidery: "Handwork",
+    image_url: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1200&q=80",
+    is_featured: true,
+    artisan_notes: "Features hand-painted lotus details."
+  },
+  {
+    name: "Neela Mint Ombré Set",
+    description: "Cool mint-to-ivory ombré with mirror peplum panel. Breathable cotton silk cut for long celebrations.",
+    price: 5499.00,
+    category: "kurti-set",
+    fabric: "Cotton Silk",
+    colors: ["Mint Green", "Ivory"],
+    embroidery: "Mirror Work",
+    image_url: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1200&q=80",
+    is_featured: true,
+    artisan_notes: "Features mirror work peplum panel."
+  },
+  {
+    name: "Rani Rose Bloom Lehenga",
+    description: "Statement lotus-appliqué skirt with structured mirror bodice. Made for the front row at a Sangeet.",
+    price: 10499.00,
+    category: "lehenga",
+    fabric: "Cotton Silk",
+    colors: ["Rose Pink"],
+    embroidery: "Mirror Work",
+    image_url: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1200&q=80",
+    is_featured: false,
+    artisan_notes: "Statement lotus appliqué."
+  },
+  {
+    name: "Utsav Sisters Anarkali",
+    description: "Signature Siankan tie-dye anarkali in three sister shades — designed to be worn together or solo.",
+    price: 7299.00,
+    category: "anarkali",
+    fabric: "Cotton Silk",
+    colors: ["Ombré Trio"],
+    embroidery: "Tie-Dye",
+    image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=80",
+    is_featured: false,
+    artisan_notes: "Signature tie-dye anarkali."
+  },
+  {
+    name: "Nila Sky Ombré Gown",
+    description: "Sky-to-ivory ombré gown with mirror-work bodice and a soft, sheer dupatta. Made to twirl.",
+    price: 6899.00,
+    category: "gown",
+    fabric: "Georgette",
+    colors: ["Sky Blue", "Ivory"],
+    embroidery: "Mirror Work",
+    image_url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80",
+    is_featured: true,
+    artisan_notes: "Mirror-work bodice with twirling flare."
+  },
+  {
+    name: "Vrinda Violet Tie-Dye Lehenga",
+    description: "Ivory panel skirt with a hand-dipped violet border, coin-detail bodice and matching dupatta.",
+    price: 7999.00,
+    category: "lehenga",
+    fabric: "Cotton Silk",
+    colors: ["Violet", "Ivory"],
+    embroidery: "Coin Work",
+    image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
+    zoom_image_url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=80",
+    is_featured: true,
+    artisan_notes: "Features hand-dipped violet border."
   }
 ];
 
@@ -229,42 +353,58 @@ const seed = async () => {
   try {
     logger.info('Starting database seeding...');
 
-    // 1️⃣ check products table
-    const { count, error: countError } = await supabaseAdmin
-      .from('products')
-      .select('*', { count: 'exact', head: true });
+    // 1️⃣ Ensure categories exist
+    logger.info('Checking categories...');
+    const { data: existingCategories, error: catFetchError } = await supabaseAdmin
+      .from('categories')
+      .select('*');
 
-    if (countError) throw countError;
+    if (catFetchError) throw catFetchError;
 
-    if (count > 0) {
-      logger.info(`Database already has ${count} products. Skipping seeding.`);
-      process.exit(0);
+    const existingSlugs = new Set(existingCategories.map(c => c.slug));
+    const categoriesToInsert = requiredCategories.filter(rc => !existingSlugs.has(rc.slug));
+
+    if (categoriesToInsert.length > 0) {
+      logger.info(`Inserting ${categoriesToInsert.length} new categories...`);
+      const { error: catInsertError } = await supabaseAdmin
+        .from('categories')
+        .insert(categoriesToInsert);
+      if (catInsertError) throw catInsertError;
     }
 
-    // 2️⃣ fetch categories (IMPORTANT - inside try)
-    const { data: categories, error } = await supabaseAdmin
+    // Refetch all categories to build full map
+    const { data: allCategories, error: allCatFetchError } = await supabaseAdmin
       .from('categories')
       .select('id, slug');
+    if (allCatFetchError) throw allCatFetchError;
 
-    if (error) throw error;
-
-    // 3️⃣ build dynamic map
     const categoryMap = {};
-    categories.forEach((c) => {
+    allCategories.forEach((c) => {
       categoryMap[c.slug] = c.id;
     });
 
-    logger.info('Products table is empty. Preparing data...');
+    // 2️⃣ Clear products table to avoid duplicates on reseeding
+    logger.info('Clearing products table...');
+    const { error: deleteError } = await supabaseAdmin
+      .from('products')
+      .delete()
+      .neq('name', '___NON_EXISTENT_PRODUCT___'); // Deletes all products
 
-    // 4️⃣ transform products
+    if (deleteError) throw deleteError;
+
+    logger.info('Preparing product data...');
+    // 3️⃣ Transform mock products
     const fixedProducts = mockProducts.map((p) => {
       const { category, ...rest } = p;
+      const categoryId = categoryMap[category];
+
+      if (!categoryId) {
+        logger.warn(`No category ID found for slug "${category}". Product: "${p.name}"`);
+      }
 
       return {
         ...rest,
-
-        category_id: categoryMap[category],
-
+        category_id: categoryId || null,
         slug: p.name
           .toLowerCase()
           .replace(/ /g, "-")
@@ -272,7 +412,8 @@ const seed = async () => {
       };
     });
 
-    // 5️⃣ insert into DB
+    // 4️⃣ Insert into DB
+    logger.info(`Inserting ${fixedProducts.length} products...`);
     const { error: insertError } = await supabaseAdmin
       .from('products')
       .insert(fixedProducts);

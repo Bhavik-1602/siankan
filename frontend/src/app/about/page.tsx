@@ -1,103 +1,61 @@
 "use client";
 
 import React from 'react';
-import Link from 'next/link';
-import { Compass, Users, Sparkles } from 'lucide-react';
 
 export default function About() {
+  const storyImage = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1920&q=80";
+  const dishaImage = "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80";
+  const minjalImage = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80";
+
   return (
-    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-      
-      {/* Header Banner */}
-      <section className="text-center max-w-2xl mx-auto mb-20 space-y-4">
-        <span className="text-[10px] font-bold tracking-[0.25em] text-gold-400 uppercase block">
-          SIANKAN Art of Design
-        </span>
-        <h1 className="font-editorial text-4xl sm:text-5xl text-neutral-850 font-light">
-          Our Brand Story
+    <div className="bg-[#FAF8F5] pb-24 text-neutral-800">
+      <section className="mx-auto max-w-3xl px-6 pt-20 pb-12 text-center">
+        <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.28em] text-maroon-600">Our Story</p>
+        <h1 className="font-editorial text-4xl sm:text-5xl font-light leading-snug tracking-wide">
+          A quiet studio, three sisters, and a bolt of naturally-dyed silk.
         </h1>
-        <div className="w-10 h-[1.5px] bg-gold-300 mx-auto" />
-        <p className="text-neutral-500 text-xs sm:text-sm leading-relaxed">
-          Discover our philosophy, craft roots, and dedication to pastel elegance in ethnic and bespoke couture fashion.
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6">
+        <img 
+          src={storyImage} 
+          alt="Siankan collective work" 
+          className="aspect-[16/9] w-full object-cover rounded-sm shadow-md" 
+        />
+      </section>
+
+      <section className="mx-auto grid max-w-3xl gap-8 px-6 py-16 text-sm font-light leading-relaxed text-neutral-500">
+        <p>
+          <span className="font-editorial text-2xl text-neutral-900 font-light">Siankan</span> was born in 2023 in a small studio in Gujarat, from a simple question — why can't traditional Indian wear feel as easy and personal as our favourite everyday clothes?
+        </p>
+        <p>
+          We work almost entirely by hand. Our fabrics are naturally dyed in small batches. Our mirror-work is stitched by a family of artisans we have known for years. Every silhouette is cut for movement — for the friend twirling on a Sangeet dance floor, for the aunt greeting guests, for the bride's sister who wants to feel special too.
+        </p>
+        <p>
+          Nothing about the process is fast. Each piece takes ten to fourteen days from your order to the moment it leaves the studio. What you receive is one of only a few in the world, and no two are ever exactly alike.
         </p>
       </section>
 
-      {/* Grid Story details */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-24">
-        <div className="space-y-6">
-          <h2 className="font-editorial text-2.5xl sm:text-3.5xl text-neutral-800 leading-tight">
-            The Philosophy of <br />
-            <span className="italic text-maroon-600">Pastel Elegance</span>
-          </h2>
-          <div className="w-10 h-[1.5px] bg-gold-300" />
-          
-          <p className="text-neutral-505 text-xs sm:text-sm leading-relaxed">
-            At SIANKAN, we believe that premium ethnic wear should feel light, elegant, and deeply personal. We specialize in custom-tailored, pastel-themed outfits that diverge from heavy, garish colors to present a soft, luxurious palette.
-          </p>
-          <p className="text-neutral-505 text-xs sm:text-sm leading-relaxed">
-            Our designs combine raw silk foundations, georgettes, and translucent organzas with traditional handwork techniques like zardosi, aari beads, and real glass mirrors. Every motif is conceptualized by our lead designers and sewn by karigars.
-          </p>
-          <div className="pt-4">
-            <Link href="/collections" className="bg-[#4A0E17] hover:bg-maroon-500 text-white text-[10px] font-bold tracking-widest uppercase py-3.5 px-8 transition-colors rounded-sm inline-block shadow-md cursor-pointer">
-              Explore Collections
-            </Link>
-          </div>
-        </div>
-
-        {/* Brand Image showcase */}
-        <div className="relative h-[440px] rounded-sm overflow-hidden border border-neutral-200/50 shadow-lg select-none">
-          <img 
-            src="/images/hero_image.jpg" 
-            alt="Artisans weaving silk threads" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-[#4A0E17]/5" />
-        </div>
-      </div>
-
-      {/* Objectives / Pillars */}
-      <section className="bg-neutral-50 border border-neutral-200/40 rounded-sm p-8 sm:p-12 mb-10">
-        <div className="text-center mb-12 space-y-2">
-          <span className="text-[10px] font-bold tracking-[0.2em] text-gold-400 uppercase block">Boutique Core</span>
-          <h3 className="font-editorial text-2.5xl text-neutral-800 font-light">Our Core Pillars</h3>
-          <div className="w-8 h-[1.5px] bg-gold-300 mx-auto mt-2" />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          
-          <div className="text-center space-y-4 p-4 bg-white border border-neutral-200/30 rounded-sm shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-gold-50/20 rounded-full flex items-center justify-center text-maroon-600 mx-auto border border-gold-300/30">
-              <Compass size={18} strokeWidth={1.8} />
+      <section className="mx-auto max-w-7xl px-6 py-16">
+        <div className="grid gap-8 md:grid-cols-3">
+          {[
+            { n: "01", t: "Hand-dyed", d: "Natural pigments, dip-dyed in small batches — every panel is a little different." },
+            { n: "02", t: "Mirror-worked", d: "Traditional Kutch mirror embroidery, applied by hand, one piece at a time." },
+            { n: "03", t: "Made to order", d: "We don't hold stock. Each piece is cut for you the moment you order it." },
+          ].map((v) => (
+            <div key={v.n} className="border-t border-neutral-200 pt-6 space-y-2">
+              <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-maroon-600">{v.n}</p>
+              <h3 className="font-editorial text-2xl font-light text-neutral-800">{v.t}</h3>
+              <p className="text-xs font-light text-neutral-500 leading-relaxed">{v.d}</p>
             </div>
-            <h4 className="font-editorial text-lg text-neutral-800">Modern Ethnic Vision</h4>
-            <p className="text-neutral-500 text-xs leading-relaxed">
-              Updating traditional silhouettes with clean lines, pre-draped options, and contemporary structures.
-            </p>
-          </div>
-
-          <div className="text-center space-y-4 p-4 bg-white border border-neutral-200/30 rounded-sm shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-gold-50/20 rounded-full flex items-center justify-center text-maroon-600 mx-auto border border-gold-300/30">
-              <Sparkles size={18} strokeWidth={1.8} />
-            </div>
-            <h4 className="font-editorial text-lg text-neutral-800">Premium Craftsmanship</h4>
-            <p className="text-neutral-500 text-xs leading-relaxed">
-              Refusing prints and machine-copy work. We are dedicated strictly to genuine hand looms and hand-stitch embroidery.
-            </p>
-          </div>
-
-          <div className="text-center space-y-4 p-4 bg-white border border-neutral-200/30 rounded-sm shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-gold-50/20 rounded-full flex items-center justify-center text-maroon-600 mx-auto border border-gold-300/30">
-              <Users size={18} strokeWidth={1.8} />
-            </div>
-            <h4 className="font-editorial text-lg text-neutral-800">Personalized Experiences</h4>
-            <p className="text-neutral-500 text-xs leading-relaxed">
-              Every client has a custom coordinate file. We consult on fabric weight, neckline cut, and custom sleeve layouts.
-            </p>
-          </div>
-
+          ))}
         </div>
       </section>
 
+      <section className="mx-auto grid max-w-7xl gap-6 px-6 pb-12 md:grid-cols-2">
+        <img src={dishaImage} alt="Premium Lehenga Design" className="aspect-[4/5] w-full object-cover rounded-sm shadow-sm" />
+        <img src={minjalImage} alt="Bespoke embroidery detail" className="aspect-[4/5] w-full object-cover rounded-sm shadow-sm" />
+      </section>
     </div>
   );
 }
