@@ -26,6 +26,103 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const parallaxRef = useRef<HTMLDivElement>(null);
 
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const interactTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isScrollingByUser, setIsScrollingByUser] = useState(false);
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeftStart, setScrollLeftStart] = useState(0);
+
+  const resetInactivityTimer = () => {
+    if (interactTimeoutRef.current) clearTimeout(interactTimeoutRef.current);
+    interactTimeoutRef.current = setTimeout(() => {
+      setIsScrollingByUser(false);
+    }, 3000);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsMouseDown(true);
+    setIsDragging(false);
+    setIsScrollingByUser(true);
+    setStartX(e.pageX - (carouselRef.current?.offsetLeft || 0));
+    setScrollLeftStart(carouselRef.current?.scrollLeft || 0);
+    if (interactTimeoutRef.current) clearTimeout(interactTimeoutRef.current);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isMouseDown || !carouselRef.current) return;
+    const x = e.pageX - carouselRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    if (Math.abs(x - startX) > 5) {
+      setIsDragging(true);
+    }
+    e.preventDefault();
+    carouselRef.current.scrollLeft = scrollLeftStart - walk;
+  };
+
+  const handleMouseUpOrLeave = () => {
+    if (isMouseDown) {
+      setIsMouseDown(false);
+      resetInactivityTimer();
+    }
+  };
+
+  const handleWheel = () => {
+    setIsScrollingByUser(true);
+    resetInactivityTimer();
+  };
+
+  const handleTouchStart = () => {
+    setIsScrollingByUser(true);
+    if (interactTimeoutRef.current) clearTimeout(interactTimeoutRef.current);
+  };
+
+  const handleTouchEnd = () => {
+    resetInactivityTimer();
+  };
+
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el || products.length === 0) return;
+
+    let animationFrameId: number;
+    let lastTime = performance.now();
+    const speed = 0.04;
+
+    const scroll = (time: number) => {
+      const delta = time - lastTime;
+      
+      if (!isHovered && !isScrollingByUser && !isMouseDown) {
+        el.scrollLeft += speed * delta;
+      }
+
+      // Infinite loop wrap-around logic
+      const maxScroll = el.scrollWidth / 3;
+      if (el.scrollLeft >= maxScroll * 2) {
+        el.scrollLeft -= maxScroll;
+      } else if (el.scrollLeft <= 0) {
+        el.scrollLeft += maxScroll;
+      }
+
+      lastTime = time;
+      animationFrameId = requestAnimationFrame(scroll);
+    };
+
+    animationFrameId = requestAnimationFrame(scroll);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [products, isHovered, isScrollingByUser, isMouseDown]);
+
+  useEffect(() => {
+    return () => {
+      if (interactTimeoutRef.current) clearTimeout(interactTimeoutRef.current);
+    };
+  }, []);
+
   useEffect(() => {
     // Fetch products from backend Express API
     const loadProducts = async () => {
@@ -79,8 +176,10 @@ export default function Home() {
     }
 
     return () => {
-      ScrollTrigger.getAll().forEach((st) => st.kill());
-      if (trigger) gsap.killTweensOf(trigger);
+      if (tl) {
+        tl.scrollTrigger?.kill();
+        tl.kill();
+      }
     };
   }, [loading]);
 
@@ -209,26 +308,47 @@ export default function Home() {
       {/* Product Sliding Carousel */}
       <section className="relative overflow-hidden pb-24">
         {products.length > 0 && (
-          <motion.div
-            className="flex gap-6 px-6"
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{ duration: 45, ease: "linear", repeat: Infinity }}
-            style={{ width: "max-content" }}
+          <div
+            ref={carouselRef}
+            className="flex gap-6 overflow-x-auto no-scrollbar px-6 select-none"
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              cursor: isMouseDown ? "grabbing" : "grab",
+            }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => {
+              setIsHovered(false);
+              handleMouseUpOrLeave();
+            }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUpOrLeave}
+            onWheel={handleWheel}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
-            {[...products, ...products].map((p, i) => (
+            {[...products, ...products, ...products].map((p, i) => (
               <Link
                 key={`${p.id}-${i}`}
                 href={`/product/${p.id}`}
-                className="group relative block w-[280px] shrink-0 overflow-hidden bg-neutral-100 md:w-[340px] rounded-sm"
+                onClick={(e) => {
+                  if (isDragging) {
+                    e.preventDefault();
+                  }
+                }}
+                className="group relative block w-[280px] shrink-0 overflow-hidden bg-neutral-100 md:w-[340px] rounded-sm pointer-events-auto"
+                draggable={false}
               >
-                <div className="aspect-[3/4] overflow-hidden">
+                <div className="aspect-[3/4] overflow-hidden" draggable={false}>
                   <img
                     src={p.image_url}
                     alt={p.name}
                     className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110"
+                    draggable={false}
                   />
                 </div>
-                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-neutral-950 via-neutral-900/40 to-transparent p-6 text-white">
+                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-neutral-950 via-neutral-900/40 to-transparent p-6 text-white" draggable={false}>
                   <div>
                     <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#FAF8F5]/75">
                       {p.category_id ? "Siankan Couture" : "Signature"}
@@ -244,7 +364,7 @@ export default function Home() {
                 </div>
               </Link>
             ))}
-          </motion.div>
+          </div>
         )}
       </section>
 

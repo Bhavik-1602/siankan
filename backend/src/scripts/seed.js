@@ -1,5 +1,7 @@
 import { supabaseAdmin } from '../config/supabase.js';
 import { logger } from '../utils/logger.js';
+import fs from 'fs';
+import path from 'path';
 
 const requiredCategories = [
   { name: "Saree", slug: "saree" },
@@ -17,6 +19,8 @@ const requiredCategories = [
   { name: "Bridesmaid Lehenga", slug: "bridesmaid" },
   { name: "Traditional Wear", slug: "traditional" }
 ];
+
+const pricePattern = [1499, 999, 2599, 1999];
 
 const mockProducts = [
   // Original products
@@ -353,6 +357,57 @@ const seed = async () => {
   try {
     logger.info('Starting database seeding...');
 
+    // 0️⃣ Ensure products storage bucket exists and upload local images
+    logger.info('Checking Supabase Storage buckets...');
+    const { data: buckets, error: listBucketsError } = await supabaseAdmin.storage.listBuckets();
+    if (listBucketsError) throw listBucketsError;
+
+    const bucketName = 'products';
+    const hasBucket = buckets.some(b => b.name === bucketName);
+
+    if (!hasBucket) {
+      logger.info(`Creating public storage bucket: "${bucketName}"`);
+      const { error: createBucketError } = await supabaseAdmin.storage.createBucket(bucketName, {
+        public: true,
+        allowedMimeTypes: ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'],
+        fileSizeLimit: 15728640 // 15MB
+      });
+      if (createBucketError) throw createBucketError;
+    }
+
+    // Read and upload files
+    logger.info('Uploading local assets to Supabase Storage...');
+    const imagesDir = path.join(process.cwd(), '../frontend/public/images');
+    const files = fs.readdirSync(imagesDir);
+    const storageUrls = {};
+
+    for (const file of files) {
+      const filePath = path.join(imagesDir, file);
+      const stat = fs.statSync(filePath);
+      if (stat.isFile()) {
+        const fileBuffer = fs.readFileSync(filePath);
+        const fileExt = path.extname(file).toLowerCase();
+        const contentType = fileExt === '.png' ? 'image/png' : 'image/jpeg';
+
+        // Upload/Upsert to bucket
+        const { error: uploadError } = await supabaseAdmin.storage
+          .from(bucketName)
+          .upload(file, fileBuffer, {
+            contentType,
+            upsert: true
+          });
+
+        if (uploadError) {
+          logger.warn(`Failed to upload ${file} to storage: ${uploadError.message}`);
+        } else {
+          const { data: { publicUrl } } = supabaseAdmin.storage
+            .from(bucketName)
+            .getPublicUrl(file);
+          storageUrls[file] = publicUrl;
+        }
+      }
+    }
+
     // 1️⃣ Ensure categories exist
     logger.info('Checking categories...');
     const { data: existingCategories, error: catFetchError } = await supabaseAdmin
@@ -394,16 +449,37 @@ const seed = async () => {
 
     logger.info('Preparing product data...');
     // 3️⃣ Transform mock products
-    const fixedProducts = mockProducts.map((p) => {
+    const fixedProducts = mockProducts.map((p, index) => {
       const { category, ...rest } = p;
       const categoryId = categoryMap[category];
+      const priceValue = pricePattern[index % pricePattern.length];
 
       if (!categoryId) {
         logger.warn(`No category ID found for slug "${category}". Product: "${p.name}"`);
       }
 
+      // Map local /images/ paths to Supabase Storage public URLs
+      let finalImageUrl = p.image_url;
+      let finalZoomImageUrl = p.zoom_image_url;
+
+      if (p.image_url.startsWith('/images/')) {
+        const fileName = path.basename(p.image_url);
+        if (storageUrls[fileName]) {
+          finalImageUrl = storageUrls[fileName];
+        }
+      }
+      if (p.zoom_image_url && p.zoom_image_url.startsWith('/images/')) {
+        const fileName = path.basename(p.zoom_image_url);
+        if (storageUrls[fileName]) {
+          finalZoomImageUrl = storageUrls[fileName];
+        }
+      }
+
       return {
         ...rest,
+        price: priceValue,
+        image_url: finalImageUrl,
+        zoom_image_url: finalZoomImageUrl,
         category_id: categoryId || null,
         slug: p.name
           .toLowerCase()

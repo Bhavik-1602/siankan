@@ -12,14 +12,16 @@ interface ZoomParallaxProps {
   images: Image[];
 }
 
+// Inline dimensions and offsets to position the items in the grid.
+// transform: translate(X, Y) relative to the centered parent container.
 const positions = [
-  "",
-  "[&>div]:!-top-[30vh] [&>div]:!left-[5vw] [&>div]:!h-[30vh] [&>div]:!w-[35vw]",
-  "[&>div]:!-top-[10vh] [&>div]:!-left-[25vw] [&>div]:!h-[45vh] [&>div]:!w-[20vw]",
-  "[&>div]:!left-[27.5vw] [&>div]:!h-[25vh] [&>div]:!w-[25vw]",
-  "[&>div]:!top-[27.5vh] [&>div]:!left-[5vw] [&>div]:!h-[25vh] [&>div]:!w-[20vw]",
-  "[&>div]:!top-[27.5vh] [&>div]:!-left-[22.5vw] [&>div]:!h-[25vh] [&>div]:!w-[30vw]",
-  "[&>div]:!top-[22.5vh] [&>div]:!left-[25vw] [&>div]:!h-[15vh] [&>div]:!w-[15vw]",
+  { width: "25vw", height: "25vh", top: "0", left: "0" }, // Center image
+  { width: "35vw", height: "30vh", top: "-30vh", left: "5vw" }, // Top-Right
+  { width: "20vw", height: "45vh", top: "-10vh", left: "-25vw" }, // Top-Left
+  { width: "25vw", height: "25vh", top: "0", left: "27.5vw" }, // Middle-Right
+  { width: "20vw", height: "25vh", top: "27.5vh", left: "5vw" }, // Bottom-Right
+  { width: "30vw", height: "25vh", top: "27.5vh", left: "-22.5vw" }, // Bottom-Left
+  { width: "15vw", height: "15vh", top: "22.5vh", left: "25vw" }, // Small Middle-Far Right
 ];
 
 export function ZoomParallax({ images }: ZoomParallaxProps) {
@@ -42,13 +44,22 @@ export function ZoomParallax({ images }: ZoomParallaxProps) {
       <div className="sticky top-0 h-screen overflow-hidden bg-neutral-950">
         {images.slice(0, 7).map(({ src, alt }, index) => {
           const scale = scales[index % scales.length];
+          const pos = positions[index] || { width: "25vw", height: "25vh", top: "0", left: "0" };
+
           return (
             <motion.div
               key={index}
               style={{ scale }}
-              className={`absolute top-0 flex h-full w-full items-center justify-center ${positions[index] ?? ""}`}
+              className="absolute inset-0 flex h-full w-full items-center justify-center"
             >
-              <div className="relative h-[25vh] w-[25vw] overflow-hidden rounded-sm shadow-2xl border border-white/5">
+              <div
+                className="relative overflow-hidden rounded-sm shadow-2xl border border-white/5 transition-shadow duration-300"
+                style={{
+                  width: pos.width,
+                  height: pos.height,
+                  transform: `translate(${pos.left}, ${pos.top})`,
+                }}
+              >
                 <img
                   src={src}
                   alt={alt ?? ""}
