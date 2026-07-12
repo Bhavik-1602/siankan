@@ -86,10 +86,10 @@ export default function AdminCategoriesPage() {
 
       {error && <div className="admin-error">{error}</div>}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px', alignItems: 'start' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
         {/* Form */}
-        <section className="admin-panel">
+        <section className="admin-panel lg:col-span-1">
           <h3 className="admin-h2" style={{ marginBottom: '20px' }}>{editingId ? 'Edit Category' : 'Create Category'}</h3>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
@@ -112,7 +112,7 @@ export default function AdminCategoriesPage() {
         </section>
 
         {/* List */}
-        <section className="admin-panel">
+        <section className="admin-panel lg:col-span-2">
           <h3 className="admin-h2" style={{ marginBottom: '20px' }}>Couture Categories</h3>
           {categories.length === 0 ? (
             <p style={{ fontSize: '13px', color: 'oklch(0.52 0.014 65)', padding: '16px 0' }}>No categories configured in the store catalog.</p>

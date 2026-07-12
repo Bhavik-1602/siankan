@@ -77,7 +77,7 @@ export const createProduct = async (productData: Omit<Product, 'id' | 'created_a
 
 export const updateProduct = async (id: string, productData: Omit<Product, 'id' | 'created_at'>): Promise<{ success: boolean; product: Product }> => {
   try {
-    const res = await fetch(`/api/products/${id}`, {
+    const res = await apiFetch(`/api/products/${id}`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify(productData)
@@ -96,7 +96,7 @@ export const updateProduct = async (id: string, productData: Omit<Product, 'id' 
 
 export const deleteProduct = async (id: string): Promise<{ success: boolean }> => {
   try {
-    const res = await fetch(`/api/products/${id}`, {
+    const res = await apiFetch(`/api/products/${id}`, {
       method: 'DELETE',
       headers: getAuthHeaders()
     });

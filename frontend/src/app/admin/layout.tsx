@@ -1,14 +1,19 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useApp } from '@/lib/AppContext';
-import { LayoutDashboard, ShoppingBag, Package, FolderTree, LogOut, Store } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Package, FolderTree, LogOut, Store, Menu, X } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, logout } = useApp();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   if (pathname === '/admin/login') return <>{children}</>;
 
@@ -26,18 +31,44 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex min-h-screen w-full" style={{ background: 'oklch(0.977 0.008 85)', color: 'oklch(0.22 0.012 60)', fontFamily: 'var(--font-sans)' }}>
 
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* ── Dark Sidebar ── */}
-      <aside style={{ width: '256px', background: 'oklch(0.21 0.012 60)', borderRight: '1px solid oklch(0.3 0.012 60)', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+      <aside 
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col w-64 border-r transition-transform duration-300 lg:relative lg:translate-x-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        style={{ 
+          background: 'oklch(0.21 0.012 60)', 
+          borderColor: 'oklch(0.3 0.012 60)',
+          flexShrink: 0 
+        }}
+      >
 
         {/* Logo */}
-        <div style={{ padding: '20px 16px', borderBottom: '1px solid oklch(0.3 0.012 60)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ display: 'grid', height: '36px', width: '36px', placeItems: 'center', borderRadius: '10px', background: 'oklch(0.62 0.16 45)', color: 'oklch(0.98 0.01 85)', flexShrink: 0, boxShadow: '0 2px 8px oklch(0.59 0.155 42 / 0.35)' }}>
-            <Store size={18} />
-          </span>
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 600, letterSpacing: '-0.02em', color: 'oklch(0.9 0.008 80)' }}>N&A Boutique</span>
-            <span style={{ fontSize: '10px', color: 'oklch(0.9 0.008 80)', opacity: 0.45, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>Admin Console</span>
+        <div style={{ padding: '20px 16px', borderBottom: '1px solid oklch(0.3 0.012 60)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ display: 'grid', height: '36px', width: '36px', placeItems: 'center', borderRadius: '10px', background: 'oklch(0.62 0.16 45)', color: 'oklch(0.98 0.01 85)', flexShrink: 0, boxShadow: '0 2px 8px oklch(0.59 0.155 42 / 0.35)' }}>
+              <Store size={18} />
+            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 600, letterSpacing: '-0.02em', color: 'oklch(0.9 0.008 80)' }}>N&A Boutique</span>
+              <span style={{ fontSize: '10px', color: 'oklch(0.9 0.008 80)', opacity: 0.45, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>Admin Console</span>
+            </div>
           </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            style={{ display: 'inline-flex', background: 'transparent', border: 'none', color: 'oklch(0.9 0.008 80)', cursor: 'pointer', opacity: 0.7 }}
+            className="lg:hidden"
+          >
+            <X size={20} />
+          </button>
         </div>
 
         {/* Navigation */}
@@ -103,10 +134,39 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
 
         {/* Top bar */}
-        <header style={{ position: 'sticky', top: 0, zIndex: 30, display: 'flex', height: '60px', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid oklch(0.9 0.012 80)', background: 'oklch(0.977 0.008 85 / 0.85)', padding: '0 32px', backdropFilter: 'blur(12px)' }}>
-          <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'oklch(0.52 0.014 65)', background: 'oklch(0.945 0.01 82)', padding: '4px 10px', borderRadius: '6px' }}>
-            Environment: Live
-          </span>
+        <header 
+          style={{ 
+            position: 'sticky', 
+            top: 0, 
+            zIndex: 30, 
+            display: 'flex', 
+            height: '60px', 
+            alignItems: 'center', 
+            justifyContent: 'space-between', 
+            borderBottom: '1px solid oklch(0.9 0.012 80)', 
+            background: 'oklch(0.977 0.008 85 / 0.85)', 
+            backdropFilter: 'blur(12px)' 
+          }}
+          className="px-4 lg:px-8"
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button
+              onClick={() => setSidebarOpen(true)}
+              style={{
+                display: 'inline-flex',
+                background: 'transparent',
+                border: 'none',
+                color: 'oklch(0.22 0.012 60)',
+                cursor: 'pointer',
+              }}
+              className="lg:hidden p-2 -ml-2 rounded-lg hover:bg-neutral-200/50"
+            >
+              <Menu size={20} />
+            </button>
+            <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'oklch(0.52 0.014 65)', background: 'oklch(0.945 0.01 82)', padding: '4px 10px', borderRadius: '6px' }}>
+              Environment: Live
+            </span>
+          </div>
           <Link
             href="/"
             style={{ fontSize: '12px', fontWeight: 500, color: 'oklch(0.52 0.014 65)', border: '1px solid oklch(0.9 0.012 80)', padding: '6px 14px', borderRadius: '999px', background: 'oklch(0.995 0.004 90)', textDecoration: 'none', boxShadow: '0 1px 2px oklch(0.22 0.012 60 / 0.04)' }}
@@ -115,7 +175,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Link>
         </header>
 
-        <main style={{ flex: 1, padding: '32px', overflowY: 'auto' }}>
+        <main style={{ flex: 1, overflowY: 'auto' }} className="p-4 md:p-6 lg:p-8">
           {children}
         </main>
       </div>

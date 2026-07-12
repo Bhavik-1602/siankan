@@ -191,126 +191,134 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* ── KPI stat cards ── */}
-      <div style={{ display: 'grid', gap: '14px', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map(k => <StatCard key={k.label} {...k} />)}
       </div>
 
       {/* ── Revenue + Category row ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px' }}>
-        <Panel
-          title="Revenue & Profit"
-          description="Monthly performance across all channels"
-          action={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontSize: '11px', color: 'oklch(0.52 0.014 65)' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'oklch(0.59 0.155 42)', display: 'inline-block' }} />Revenue</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'oklch(0.55 0.07 165)', display: 'inline-block' }} />Profit</span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="lg:col-span-2">
+          <Panel
+            title="Revenue & Profit"
+            description="Monthly performance across all channels"
+            action={
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontSize: '11px', color: 'oklch(0.52 0.014 65)' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'oklch(0.59 0.155 42)', display: 'inline-block' }} />Revenue</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'oklch(0.55 0.07 165)', display: 'inline-block' }} />Profit</span>
+              </div>
+            }
+          >
+            <div style={{ height: '270px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={revenueSeries} margin={{ left: -8, right: 8, top: 8 }}>
+                  <defs>
+                    <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="oklch(0.59 0.155 42)" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="oklch(0.59 0.155 42)" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="prof" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="oklch(0.55 0.07 165)" stopOpacity={0.35} />
+                      <stop offset="100%" stopColor="oklch(0.55 0.07 165)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid vertical={false} stroke="oklch(0.9 0.012 80)" strokeDasharray="4 4" />
+                  <XAxis dataKey="month" tickLine={false} axisLine={false} tick={tickStyle} />
+                  <YAxis tickFormatter={v => `₹${(v/1000).toFixed(0)}k`} tickLine={false} axisLine={false} tick={tickStyle} width={52} />
+                  <Tooltip content={<ChartTip />} />
+                  <Area type="monotone" dataKey="revenue" stroke="oklch(0.59 0.155 42)" strokeWidth={2.5} fill="url(#rev)" />
+                  <Area type="monotone" dataKey="profit"  stroke="oklch(0.55 0.07 165)" strokeWidth={2.5} fill="url(#prof)" />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
-          }
-        >
-          <div style={{ height: '270px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={revenueSeries} margin={{ left: -8, right: 8, top: 8 }}>
-                <defs>
-                  <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="oklch(0.59 0.155 42)" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="oklch(0.59 0.155 42)" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="prof" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="oklch(0.55 0.07 165)" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="oklch(0.55 0.07 165)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid vertical={false} stroke="oklch(0.9 0.012 80)" strokeDasharray="4 4" />
-                <XAxis dataKey="month" tickLine={false} axisLine={false} tick={tickStyle} />
-                <YAxis tickFormatter={v => `₹${(v/1000).toFixed(0)}k`} tickLine={false} axisLine={false} tick={tickStyle} width={52} />
-                <Tooltip content={<ChartTip />} />
-                <Area type="monotone" dataKey="revenue" stroke="oklch(0.59 0.155 42)" strokeWidth={2.5} fill="url(#rev)" />
-                <Area type="monotone" dataKey="profit"  stroke="oklch(0.55 0.07 165)" strokeWidth={2.5} fill="url(#prof)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </Panel>
+          </Panel>
+        </div>
 
-        <Panel title="Sales by Category" description="Share of revenue">
-          <div style={{ height: '170px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={categorySplit} dataKey="value" innerRadius={50} outerRadius={72} paddingAngle={3} stroke="none">
-                  {categorySplit.map(c => <Cell key={c.name} fill={c.color} />)}
-                </Pie>
-                <Tooltip content={({ active, payload }) => active && payload?.length ? (
-                  <div style={{ background: 'oklch(0.995 0.004 90)', border: '1px solid oklch(0.9 0.012 80)', borderRadius: '8px', padding: '8px 12px', fontSize: '12px', color: 'oklch(0.22 0.012 60)' }}>
-                    {payload[0].name}: <strong>{payload[0].value}%</strong>
-                  </div>
-                ) : null} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <ul style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px', listStyle: 'none', padding: 0, margin: '12px 0 0' }}>
-            {categorySplit.map(c => (
-              <li key={c.name} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
-                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: c.color, flexShrink: 0 }} />
-                <span style={{ color: 'oklch(0.22 0.012 60)' }}>{c.name}</span>
-                <span style={{ marginLeft: 'auto', fontWeight: 600, color: 'oklch(0.52 0.014 65)' }}>{c.value}%</span>
-              </li>
-            ))}
-          </ul>
-        </Panel>
+        <div className="lg:col-span-1">
+          <Panel title="Sales by Category" description="Share of revenue">
+            <div style={{ height: '170px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={categorySplit} dataKey="value" innerRadius={50} outerRadius={72} paddingAngle={3} stroke="none">
+                    {categorySplit.map(c => <Cell key={c.name} fill={c.color} />)}
+                  </Pie>
+                  <Tooltip content={({ active, payload }) => active && payload?.length ? (
+                    <div style={{ background: 'oklch(0.995 0.004 90)', border: '1px solid oklch(0.9 0.012 80)', borderRadius: '8px', padding: '8px 12px', fontSize: '12px', color: 'oklch(0.22 0.012 60)' }}>
+                      {payload[0].name}: <strong>{payload[0].value}%</strong>
+                    </div>
+                  ) : null} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <ul style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px', listStyle: 'none', padding: 0, margin: '12px 0 0' }}>
+              {categorySplit.map(c => (
+                <li key={c.name} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
+                  <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: c.color, flexShrink: 0 }} />
+                  <span style={{ color: 'oklch(0.22 0.012 60)' }}>{c.name}</span>
+                  <span style={{ marginLeft: 'auto', fontWeight: 600, color: 'oklch(0.52 0.014 65)' }}>{c.value}%</span>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        </div>
       </div>
 
       {/* ── Recent orders + Top products row ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px' }}>
-        <Panel
-          title="Recent Orders"
-          description="Latest activity across your channels"
-          action={
-            <Link href="/admin/orders" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 600, color: 'oklch(0.59 0.155 42)', textDecoration: 'none', padding: '5px 10px', borderRadius: '999px', border: '1px solid oklch(0.9 0.012 80)' }}>
-              View all <ArrowUpRight size={13} />
-            </Link>
-          }
-        >
-          <div style={{ marginLeft: '-4px', marginRight: '-4px' }}>
-            {recentOrders.length === 0 ? (
-              <p style={{ fontSize: '13px', color: 'oklch(0.52 0.014 65)', padding: '12px 4px' }}>No recent orders.</p>
-            ) : recentOrders.map(o => {
-              const st = statusMap[o.status] || { bg: 'oklch(0.945 0.01 82)', color: 'oklch(0.52 0.014 65)' };
-              const initials = (o.customer_name || 'CU').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
-              return (
-                <div key={o.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 4px', borderBottom: '1px solid oklch(0.9 0.012 80)' }}>
-                  <span style={{ display: 'grid', height: '36px', width: '36px', placeItems: 'center', borderRadius: '50%', background: 'oklch(0.945 0.01 82)', fontSize: '11px', fontWeight: 700, color: 'oklch(0.22 0.012 60)', flexShrink: 0 }}>{initials}</span>
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <p style={{ fontSize: '13px', fontWeight: 500, color: 'oklch(0.22 0.012 60)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{o.customer_name}</p>
-                    <p style={{ fontSize: '11px', color: 'oklch(0.52 0.014 65)', margin: 0 }}>{o.id}</p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="lg:col-span-2">
+          <Panel
+            title="Recent Orders"
+            description="Latest activity across your channels"
+            action={
+              <Link href="/admin/orders" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 600, color: 'oklch(0.59 0.155 42)', textDecoration: 'none', padding: '5px 10px', borderRadius: '999px', border: '1px solid oklch(0.9 0.012 80)' }}>
+                View all <ArrowUpRight size={13} />
+              </Link>
+            }
+          >
+            <div style={{ marginLeft: '-4px', marginRight: '-4px' }}>
+              {recentOrders.length === 0 ? (
+                <p style={{ fontSize: '13px', color: 'oklch(0.52 0.014 65)', padding: '12px 4px' }}>No recent orders.</p>
+              ) : recentOrders.map(o => {
+                const st = statusMap[o.status] || { bg: 'oklch(0.945 0.01 82)', color: 'oklch(0.52 0.014 65)' };
+                const initials = (o.customer_name || 'CU').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
+                return (
+                  <div key={o.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 4px', borderBottom: '1px solid oklch(0.9 0.012 80)' }}>
+                    <span style={{ display: 'grid', height: '36px', width: '36px', placeItems: 'center', borderRadius: '50%', background: 'oklch(0.945 0.01 82)', fontSize: '11px', fontWeight: 700, color: 'oklch(0.22 0.012 60)', flexShrink: 0 }}>{initials}</span>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <p style={{ fontSize: '13px', fontWeight: 500, color: 'oklch(0.22 0.012 60)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{o.customer_name}</p>
+                      <p style={{ fontSize: '11px', color: 'oklch(0.52 0.014 65)', margin: 0 }}>{o.id}</p>
+                    </div>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', borderRadius: '999px', padding: '3px 9px', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', background: st.bg, color: st.color, flexShrink: 0 }}>{o.status}</span>
+                    <span style={{ fontFamily: 'var(--font-display)', fontSize: '13px', fontWeight: 600, color: 'oklch(0.22 0.012 60)', width: '72px', textAlign: 'right', flexShrink: 0 }}>₹{parseFloat(o.total_amount).toLocaleString('en-IN')}</span>
                   </div>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', borderRadius: '999px', padding: '3px 9px', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', background: st.bg, color: st.color, flexShrink: 0 }}>{o.status}</span>
-                  <span style={{ fontFamily: 'var(--font-display)', fontSize: '13px', fontWeight: 600, color: 'oklch(0.22 0.012 60)', width: '72px', textAlign: 'right', flexShrink: 0 }}>₹{parseFloat(o.total_amount).toLocaleString('en-IN')}</span>
-                </div>
-              );
-            })}
-          </div>
-        </Panel>
+                );
+              })}
+            </div>
+          </Panel>
+        </div>
 
-        <Panel title="Top Products" description="Best sellers this period">
-          <ul style={{ display: 'flex', flexDirection: 'column', gap: '14px', listStyle: 'none', padding: 0, margin: 0 }}>
-            {topProducts.map((p, i) => {
-              const max = topProducts[0].sold;
-              return (
-                <li key={p.name}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', marginBottom: '5px' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'oklch(0.22 0.012 60)' }}>
-                      <span style={{ fontFamily: 'var(--font-display)', fontSize: '10px', color: 'oklch(0.52 0.014 65)', minWidth: '16px' }}>{String(i + 1).padStart(2, '0')}</span>
-                      {p.name}
-                    </span>
-                    <span style={{ fontWeight: 600, color: 'oklch(0.52 0.014 65)' }}>{p.sold}</span>
-                  </div>
-                  <div style={{ height: '5px', width: '100%', borderRadius: '999px', background: 'oklch(0.945 0.01 82)', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', borderRadius: '999px', background: 'oklch(0.59 0.155 42)', width: `${(p.sold / max) * 100}%`, transition: 'width 0.6s ease' }} />
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </Panel>
+        <div className="lg:col-span-1">
+          <Panel title="Top Products" description="Best sellers this period">
+            <ul style={{ display: 'flex', flexDirection: 'column', gap: '14px', listStyle: 'none', padding: 0, margin: 0 }}>
+              {topProducts.map((p, i) => {
+                const max = topProducts[0].sold;
+                return (
+                  <li key={p.name}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', marginBottom: '5px' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'oklch(0.22 0.012 60)' }}>
+                        <span style={{ fontFamily: 'var(--font-display)', fontSize: '10px', color: 'oklch(0.52 0.014 65)', minWidth: '16px' }}>{String(i + 1).padStart(2, '0')}</span>
+                        {p.name}
+                      </span>
+                      <span style={{ fontWeight: 600, color: 'oklch(0.52 0.014 65)' }}>{p.sold}</span>
+                    </div>
+                    <div style={{ height: '5px', width: '100%', borderRadius: '999px', background: 'oklch(0.945 0.01 82)', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', borderRadius: '999px', background: 'oklch(0.59 0.155 42)', width: `${(p.sold / max) * 100}%`, transition: 'width 0.6s ease' }} />
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </Panel>
+        </div>
       </div>
 
       {/* ── Orders volume bar chart ── */}
