@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '@/lib/AppContext';
 import { useRouter } from 'next/navigation';
-import { getProducts, createProduct, updateProduct, deleteProduct, getCategories } from '@/lib/supabaseClient';
+import { getProducts, createProduct, updateProduct, deleteProduct, getCategories, uploadImage } from '@/lib/supabaseClient';
 
 export default function AdminProductsPage() {
   const { user, loading: authLoading } = useApp();
   const router = useRouter();
+  const listRef = useRef<HTMLDivElement>(null);
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,6 +41,66 @@ export default function AdminProductsPage() {
       setToast(prev => prev?.id === id ? null : prev);
     }, 4000);
   };
+
+  // Supabase Upload state
+  const [uploadingMain, setUploadingMain] = useState(false);
+  const [uploadingZoom, setUploadingZoom] = useState(false);
+
+  const handleImageUpload = async (file: File, type: 'main' | 'zoom') => {
+    if (type === 'main') setUploadingMain(true);
+    else setUploadingZoom(true);
+
+    try {
+      const res = await uploadImage(file);
+      if (!res.success) {
+        throw new Error(res.error || 'Failed to upload image to Supabase');
+      }
+
+      if (type === 'main') {
+        setImageUrl(res.url || '');
+        showToast('Main image uploaded successfully to Supabase Storage!');
+      } else {
+        setZoomImageUrl(res.url || '');
+        showToast('Detail image uploaded successfully to Supabase Storage!');
+      }
+    } catch (err: any) {
+      console.error(err);
+      showToast(err.message || 'Error uploading image', 'error');
+    } finally {
+      if (type === 'main') setUploadingMain(false);
+      else setUploadingZoom(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // Don't scroll if user is editing text fields
+      const active = document.activeElement;
+      if (
+        active &&
+        (active.tagName === "INPUT" ||
+          active.tagName === "TEXTAREA" ||
+          active.tagName === "SELECT" ||
+          active.getAttribute("contenteditable") === "true")
+      ) {
+        return;
+      }
+
+      if (!listRef.current || isModalOpen) return;
+
+      const delta = 80; // scroll amount in pixels
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        listRef.current.scrollTop -= delta;
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        listRef.current.scrollTop += delta;
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
+  }, [isModalOpen]);
 
   useEffect(() => {
     if (!authLoading) {
@@ -157,7 +218,7 @@ export default function AdminProductsPage() {
         {products.length === 0 ? (
           <p style={{ fontSize: '13px', color: 'oklch(0.52 0.014 65)' }}>No products found in the catalog.</p>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '800px', overflowY: 'auto' }} className="no-scrollbar">
+          <div ref={listRef} tabIndex={0} style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '800px', overflowY: 'auto', outline: 'none' }} className="no-scrollbar">
             {products.map(p => (
               <div key={p.id} style={{ display: 'flex', gap: '14px', alignItems: 'center', padding: '14px', borderRadius: '12px', border: '1px solid oklch(0.9 0.012 80)', background: 'oklch(0.977 0.008 85)', transition: 'box-shadow 0.15s' }}
                 onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 16px oklch(0.22 0.012 60 / 0.08)')}
@@ -280,8 +341,75 @@ export default function AdminProductsPage() {
               </div>
 
               <div><label style={lbl}>Colours (comma-separated)</label><input type="text" value={colorsInput} onChange={e => setColorsInput(e.target.value)} style={inp} placeholder="Blush Pink, Mint Green" /></div>
-              <div><label style={lbl}>Main Image URL</label><input type="text" required value={imageUrl} onChange={e => setImageUrl(e.target.value)} style={inp} placeholder="https://…" /></div>
-              <div><label style={lbl}>Zoom / Detail Image URL</label><input type="text" value={zoomImageUrl} onChange={e => setZoomImageUrl(e.target.value)} style={inp} placeholder="https://…" /></div>
+              
+              <div>
+                <label style={lbl}>Main Image URL</label>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  <input type="text" required value={imageUrl} onChange={e => setImageUrl(e.target.value)} style={{ ...inp, flex: 1 }} placeholder="https://…" />
+                  <label style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '10px 14px',
+                    borderRadius: '10px',
+                    background: 'oklch(0.945 0.01 82)',
+                    color: 'oklch(0.22 0.012 60)',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    border: '1px solid oklch(0.9 0.012 80)',
+                    transition: 'all 0.15s',
+                  }}>
+                    {uploadingMain ? 'Uploading...' : 'Upload File'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingMain}
+                      onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (file) handleImageUpload(file, 'main');
+                      }}
+                      style={{ display: 'none' }}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label style={lbl}>Zoom / Detail Image URL</label>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  <input type="text" value={zoomImageUrl} onChange={e => setZoomImageUrl(e.target.value)} style={{ ...inp, flex: 1 }} placeholder="https://…" />
+                  <label style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '10px 14px',
+                    borderRadius: '10px',
+                    background: 'oklch(0.945 0.01 82)',
+                    color: 'oklch(0.22 0.012 60)',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    border: '1px solid oklch(0.9 0.012 80)',
+                    transition: 'all 0.15s',
+                  }}>
+                    {uploadingZoom ? 'Uploading...' : 'Upload File'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingZoom}
+                      onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (file) handleImageUpload(file, 'zoom');
+                      }}
+                      style={{ display: 'none' }}
+                    />
+                  </label>
+                </div>
+              </div>
+
               <div><label style={lbl}>Artisan Story Notes</label><textarea value={artisanNotes} onChange={e => setArtisanNotes(e.target.value)} rows={2} style={{ ...inp, resize: 'vertical' }} placeholder="Handcrafted over 14 days…" /></div>
               <div><label style={lbl}>URL Slug</label><input type="text" required value={slug} onChange={e => setSlug(e.target.value)} style={{ ...inp, background: 'oklch(0.945 0.01 82)', color: 'oklch(0.52 0.014 65)' }} placeholder="crimson-kanjivaram-saree" /></div>
 

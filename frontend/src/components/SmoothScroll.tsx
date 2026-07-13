@@ -8,10 +8,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export default function SmoothScroll() {
   const pathname = usePathname();
+  const isAdminRoute = pathname?.startsWith("/admin");
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || isAdminRoute) return;
 
     // Register ScrollTrigger to sync with Lenis
     gsap.registerPlugin(ScrollTrigger);
@@ -45,15 +46,70 @@ export default function SmoothScroll() {
     // Trigger ScrollTrigger refresh once Lenis is initialized
     ScrollTrigger.refresh();
 
+    // ResizeObserver to automatically resize Lenis whenever document height changes (like filtering categories)
+    const resizeObserver = new ResizeObserver(() => {
+      lenis.resize();
+      ScrollTrigger.refresh();
+    });
+    resizeObserver.observe(document.body);
+
+    // Keyboard navigation helper to fix ArrowUp / ArrowDown scrolling with Lenis
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const active = document.activeElement;
+      // Skip if editing text fields
+      if (
+        active &&
+        (active.tagName === "INPUT" ||
+          active.tagName === "TEXTAREA" ||
+          active.tagName === "SELECT" ||
+          active.getAttribute("contenteditable") === "true")
+      ) {
+        return;
+      }
+
+      const delta = 100; // Scroll amount in pixels
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        lenis.scrollTo(lenis.scroll - delta);
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        lenis.scrollTo(lenis.scroll + delta);
+      } else if (e.key === "PageUp") {
+        e.preventDefault();
+        lenis.scrollTo(lenis.scroll - window.innerHeight * 0.8);
+      } else if (e.key === "PageDown") {
+        e.preventDefault();
+        lenis.scrollTo(lenis.scroll + window.innerHeight * 0.8);
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        lenis.scrollTo(0);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        lenis.scrollTo("bottom");
+      } else if (e.key === " ") {
+        e.preventDefault();
+        if (e.shiftKey) {
+          lenis.scrollTo(lenis.scroll - window.innerHeight * 0.8);
+        } else {
+          lenis.scrollTo(lenis.scroll + window.innerHeight * 0.8);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
     return () => {
       gsap.ticker.remove(updateScroll);
+      resizeObserver.disconnect();
+      window.removeEventListener("keydown", handleKeyDown);
       lenis.destroy();
       lenisRef.current = null;
     };
-  }, []);
+  }, [isAdminRoute]);
 
   // Handle route/pathname changes to reset scroll position and recalculate page heights
   useEffect(() => {
+    if (isAdminRoute) return;
     if (lenisRef.current) {
       // Instantly scroll to the top of the new page
       lenisRef.current.scrollTo(0, { immediate: true });
@@ -68,7 +124,7 @@ export default function SmoothScroll() {
 
       return () => clearTimeout(timer);
     }
-  }, [pathname]);
+  }, [pathname, isAdminRoute]);
 
   return null;
 }

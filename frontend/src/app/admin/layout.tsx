@@ -29,50 +29,57 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     : 'AD';
 
   return (
-    <div className="flex min-h-screen w-full" style={{ background: 'oklch(0.977 0.008 85)', color: 'oklch(0.22 0.012 60)', fontFamily: 'var(--font-sans)' }}>
+    <div 
+      className="flex h-screen w-full overflow-hidden" 
+      style={{ 
+        background: 'oklch(0.977 0.008 85)', 
+        color: 'oklch(0.22 0.012 60)', 
+        fontFamily: 'var(--font-sans)' 
+      }}
+    >
 
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-xs transition-opacity duration-300"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* ── Dark Sidebar ── */}
       <aside 
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col w-64 border-r transition-transform duration-300 lg:relative lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col w-64 border-r transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 h-full ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         style={{ 
-          background: 'oklch(0.21 0.012 60)', 
-          borderColor: 'oklch(0.3 0.012 60)',
+          background: 'oklch(0.18 0.01 60)', 
+          borderColor: 'oklch(0.25 0.01 60)',
           flexShrink: 0 
         }}
       >
 
         {/* Logo */}
-        <div style={{ padding: '20px 16px', borderBottom: '1px solid oklch(0.3 0.012 60)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+        <div style={{ padding: '24px 20px', borderBottom: '1px solid oklch(0.25 0.01 60)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ display: 'grid', height: '36px', width: '36px', placeItems: 'center', borderRadius: '10px', background: 'oklch(0.62 0.16 45)', color: 'oklch(0.98 0.01 85)', flexShrink: 0, boxShadow: '0 2px 8px oklch(0.59 0.155 42 / 0.35)' }}>
+            <span style={{ display: 'grid', height: '36px', width: '36px', placeItems: 'center', borderRadius: '10px', background: 'oklch(0.59 0.155 42)', color: 'oklch(0.98 0.01 85)', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}>
               <Store size={18} />
             </span>
             <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 600, letterSpacing: '-0.02em', color: 'oklch(0.9 0.008 80)' }}>N&A Boutique</span>
-              <span style={{ fontSize: '10px', color: 'oklch(0.9 0.008 80)', opacity: 0.45, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>Admin Console</span>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, letterSpacing: '-0.02em', color: 'oklch(0.95 0.005 85)' }}>N&A Boutique</span>
+              <span style={{ fontSize: '10px', color: 'oklch(0.9 0.008 80)', opacity: 0.5, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>Admin Console</span>
             </div>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
             style={{ display: 'inline-flex', background: 'transparent', border: 'none', color: 'oklch(0.9 0.008 80)', cursor: 'pointer', opacity: 0.7 }}
-            className="lg:hidden"
+            className="lg:hidden hover:opacity-100 transition-opacity"
           >
             <X size={20} />
           </button>
         </div>
 
-        {/* Navigation */}
-        <nav style={{ flex: 1, padding: '24px 12px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        {/* Navigation - Independent scrollable list */}
+        <nav className="flex-1 overflow-y-auto no-scrollbar" style={{ padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
           <p style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'oklch(0.9 0.008 80)', opacity: 0.35, padding: '0 12px', marginBottom: '8px' }}>Workspace</p>
           {navItems.map((item) => {
             const active = pathname === item.url || pathname?.startsWith(item.url + '/');
@@ -81,18 +88,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 key={item.title}
                 href={item.url}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '10px',
-                  padding: '10px 12px', borderRadius: '10px',
-                  fontSize: '13px', fontWeight: 500, textDecoration: 'none',
-                  transition: 'all 0.15s',
-                  background: active ? 'oklch(0.62 0.16 45)' : 'transparent',
-                  color: active ? 'oklch(0.98 0.01 85)' : 'oklch(0.9 0.008 80)',
-                  opacity: active ? 1 : 0.7,
+                  display: 'flex', alignItems: 'center', gap: '12px',
+                  padding: '12px 14px', borderRadius: '10px',
+                  fontSize: '13px', fontWeight: 550, textDecoration: 'none',
+                  transition: 'all 0.2s ease',
+                  background: active ? 'oklch(0.59 0.155 42)' : 'transparent',
+                  color: active ? 'oklch(0.98 0.01 85)' : 'oklch(0.85 0.008 80)',
+                  boxShadow: active ? '0 4px 12px rgba(0, 0, 0, 0.15)' : 'none',
                 }}
-                onMouseEnter={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = 'oklch(0.27 0.012 60)'; (e.currentTarget as HTMLElement).style.opacity = '1'; } }}
-                onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.opacity = '0.7'; } }}
+                onMouseEnter={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = 'oklch(0.24 0.01 60)'; (e.currentTarget as HTMLElement).style.color = 'oklch(0.95 0.005 85)'; } }}
+                onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'oklch(0.85 0.008 80)'; } }}
               >
-                <item.icon size={16} />
+                <item.icon size={17} />
                 <span>{item.title}</span>
               </Link>
             );
@@ -100,29 +107,45 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
 
         {/* Footer */}
-        <div style={{ padding: '12px', borderTop: '1px solid oklch(0.3 0.012 60)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {/* Insight pill */}
-          <div style={{ borderRadius: '12px', background: 'oklch(0.27 0.012 60)', padding: '12px' }}>
-            <p style={{ fontSize: '12px', fontWeight: 600, color: 'oklch(0.96 0.008 80)', marginBottom: '4px' }}>Boutique performance</p>
-            <p style={{ fontSize: '11px', color: 'oklch(0.9 0.008 80)', opacity: 0.55, lineHeight: 1.4 }}>Manage products, orders & categories from here.</p>
-          </div>
-
+        <div style={{ padding: '16px', borderTop: '1px solid oklch(0.25 0.01 60)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {/* User chip */}
           {user && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 10px', borderRadius: '10px', background: 'oklch(0.27 0.012 60)' }}>
-              <span style={{ display: 'grid', height: '30px', width: '30px', placeItems: 'center', borderRadius: '50%', background: 'oklch(0.62 0.16 45)', fontSize: '11px', fontWeight: 700, color: 'oklch(0.98 0.01 85)', flexShrink: 0 }}>{initials}</span>
-              <div style={{ minWidth: 0 }}>
-                <p style={{ fontSize: '12px', fontWeight: 600, color: 'oklch(0.9 0.008 80)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.full_name || 'Admin User'}</p>
-                <p style={{ fontSize: '10px', color: 'oklch(0.9 0.008 80)', opacity: 0.45, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.email}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', borderRadius: '12px', background: 'oklch(0.24 0.01 60)', border: '1px solid oklch(0.28 0.01 60)' }}>
+              <span style={{ display: 'grid', height: '32px', width: '32px', placeItems: 'center', borderRadius: '50%', background: 'oklch(0.59 0.155 42)', fontSize: '12px', fontWeight: 700, color: 'oklch(0.98 0.01 85)', flexShrink: 0 }}>{initials}</span>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <p style={{ fontSize: '12px', fontWeight: 600, color: 'oklch(0.95 0.005 85)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{user.full_name || 'Admin User'}</p>
+                <p style={{ fontSize: '10px', color: 'oklch(0.8 0.008 80)', opacity: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{user.email}</p>
               </div>
             </div>
           )}
 
           <button
             onClick={logout}
-            style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px 12px', borderRadius: '10px', background: 'transparent', border: '1px solid oklch(0.55 0.2 27 / 0.3)', color: 'oklch(0.62 0.19 27)', fontSize: '13px', fontWeight: 500, cursor: 'pointer', transition: 'all 0.15s' }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'oklch(0.55 0.2 27 / 0.12)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              gap: '10px', 
+              width: '100%', 
+              padding: '11px', 
+              borderRadius: '10px', 
+              background: 'transparent', 
+              border: '1px solid oklch(0.55 0.2 27 / 0.5)', 
+              color: 'oklch(0.68 0.18 27)', 
+              fontSize: '13px', 
+              fontWeight: 600, 
+              cursor: 'pointer', 
+              transition: 'all 0.15s',
+              boxSizing: 'border-box'
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'oklch(0.55 0.2 27)';
+              e.currentTarget.style.color = '#fff';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = 'oklch(0.68 0.18 27)';
+            }}
           >
             <LogOut size={15} />
             <span>Logout Console</span>
@@ -131,23 +154,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* ── Main Content ── */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
 
         {/* Top bar */}
         <header 
           style={{ 
-            position: 'sticky', 
-            top: 0, 
-            zIndex: 30, 
             display: 'flex', 
             height: '60px', 
             alignItems: 'center', 
             justifyContent: 'space-between', 
             borderBottom: '1px solid oklch(0.9 0.012 80)', 
             background: 'oklch(0.977 0.008 85 / 0.85)', 
-            backdropFilter: 'blur(12px)' 
+            backdropFilter: 'blur(12px)',
+            flexShrink: 0
           }}
-          className="px-4 lg:px-8"
+          className="px-6 lg:px-10"
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <button
@@ -175,7 +196,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Link>
         </header>
 
-        <main style={{ flex: 1, overflowY: 'auto' }} className="p-4 md:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-6 lg:p-10 no-scrollbar">
           {children}
         </main>
       </div>

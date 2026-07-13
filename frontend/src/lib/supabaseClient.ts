@@ -721,3 +721,27 @@ export const getAdminStats = async (): Promise<any> => {
   }
 };
 
+// --- Upload Image ---
+
+export const uploadImage = async (file: File): Promise<{ success: boolean; url?: string; error?: string }> => {
+  try {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const res = await apiFetch('/api/upload', {
+      method: 'POST',
+      headers: getAuthHeaders(true),
+      body: formData
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Upload failed');
+    }
+    return { success: true, url: data.url };
+  } catch (err: any) {
+    console.error("API uploadImage failed:", err);
+    return { success: false, error: err.message };
+  }
+};
+
