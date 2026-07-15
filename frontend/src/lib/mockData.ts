@@ -8,7 +8,13 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  category: 'pastel' | 'festive' | 'garba' | 'indo-western' | 'bridesmaid';
+  category_id: string;
+  categories?: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  category?: 'pastel' | 'festive' | 'garba' | 'indo-western' | 'bridesmaid'; // Deprecated
   fabric: string;
   colors: string[];
   embroidery: string;
@@ -33,6 +39,7 @@ export const mockProducts: Product[] = [
     description: "An elegant, pastel-themed Banarasi saree handwoven in premium raw silk. Features delicate sage green border motifs and a soft blush pink body designed to reflect luxury sophistication.",
     price: 115000.00,
     category: "pastel",
+    category_id: "00791a1f-46ed-4e93-800a-489419c2fee9",
     fabric: "Raw Silk",
     colors: ["Blush Pink", "Sage Green", "Cream"],
     embroidery: "Zardosi",
@@ -48,6 +55,7 @@ export const mockProducts: Product[] = [
     description: "A designer choli blouse tailored in soft lilac silk. Embellished with heavy handwork, including French knots, glass beads, and subtle zardosi wiring along the plunging sweetheart neckline.",
     price: 38000.00,
     category: "festive",
+    category_id: "11791a1f-46ed-4e93-800a-489419c2feea",
     fabric: "Mulberry Silk",
     colors: ["Pastel Lilac", "Champagne Gold"],
     embroidery: "Aari",
@@ -63,6 +71,7 @@ export const mockProducts: Product[] = [
     description: "Celebrate Navratri in royal grace. This Garba collection outfit features heavy real glass mirror work (sheesha) and colorful silk threads stitched on a soft cotton-silk foundation.",
     price: 78000.00,
     category: "garba",
+    category_id: "22791a1f-46ed-4e93-800a-489419c2feeb",
     fabric: "Cotton Silk",
     colors: ["Marigold Orange", "Fuschia Pink", "Royal Blue"],
     embroidery: "Mirror Work",
@@ -78,6 +87,7 @@ export const mockProducts: Product[] = [
     description: "A contemporary drape gown merging traditional handwork details with modern cuts. Features a pre-draped georgette dupatta and an asymmetric embroidered belt.",
     price: 52000.00,
     category: "indo-western",
+    category_id: "33791a1f-46ed-4e93-800a-489419c2feec",
     fabric: "Georgette",
     colors: ["Pastel Peach", "Rose Gold"],
     embroidery: "Gota Patti",
@@ -93,6 +103,7 @@ export const mockProducts: Product[] = [
     description: "Drape your bridal party in luxury. This bridesmaid lehenga is tailored in premium champagne net, layered over cream silk, and embroidered with subtle silver gota patti ribbon work.",
     price: 145000.00,
     category: "bridesmaid",
+    category_id: "44791a1f-46ed-4e93-800a-489419c2feed",
     fabric: "Net & Silk",
     colors: ["Champagne Gold", "Ivory Cream"],
     embroidery: "Gota Patti",
@@ -108,6 +119,7 @@ export const mockProducts: Product[] = [
     description: "A ethereal pastel lehenga crafted in mint sage organza. Features detailed floral aari stitching along the waistband and a matching light dupatta.",
     price: 88000.00,
     category: "pastel",
+    category_id: "00791a1f-46ed-4e93-800a-489419c2fee9",
     fabric: "Organza",
     colors: ["Mint Sage", "Soft Lavender"],
     embroidery: "Aari",
@@ -123,6 +135,7 @@ export const mockProducts: Product[] = [
     description: "A premium sweetheart choli tailored in raw silk. Embroidered with dense gold wire zardosi along the neckline, it is perfect to pair with a matching pastel saree or lehenga skirt.",
     price: 320000.00, // Matching bridal lehenga styling
     category: "festive",
+    category_id: "11791a1f-46ed-4e93-800a-489419c2feea",
     fabric: "Raw Silk",
     colors: ["Pastel Peach", "Ivory"],
     embroidery: "Zardosi",

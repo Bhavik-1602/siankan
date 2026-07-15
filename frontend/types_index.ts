@@ -19,7 +19,13 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  category: ProductCategory;
+  category_id: string;
+  categories?: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  category?: string; // Deprecated: use categories.name or category_id instead
   fabric: string;
   colors: string[];
   embroidery: string;

@@ -2,59 +2,80 @@ import { supabase, supabaseAdmin } from '../config/supabase.js';
 
 export const getProducts = async (req, res, next) => {
   try {
-    const { 
-      category, 
-      search, 
-      fabric, 
-      embroidery, 
-      priceMin, 
-      priceMax, 
-      sortBy = 'created_at', 
+    const {
+      category_id,
+      search,
+      fabric,
+      embroidery,
+      priceMin,
+      priceMax,
+      sortBy = 'created_at',
       sortOrder = 'desc',
       page = 1,
       limit = 50
     } = req.query;
 
-    let query = supabaseAdmin.from('products').select('*', { count: 'exact' });
+    let query = supabaseAdmin
+      .from('products')
+      .select(`
+        *,
+        categories (
+          id,
+          name,
+          slug
+        )
+      `, { count: 'exact' });
 
-    if (category && category !== 'all') {
-      query = query.eq('category', category);
+    const selectedCategoryId = category_id || req.query.category;
+    if (selectedCategoryId && selectedCategoryId !== 'all') {
+      query = query.eq('category_id', selectedCategoryId);
     }
+
     if (fabric) {
       query = query.eq('fabric', fabric);
     }
+
     if (embroidery) {
       query = query.eq('embroidery', embroidery);
     }
+
     if (search) {
-      query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
+      query = query.or(
+        `name.ilike.%${search}%,description.ilike.%${search}%`
+      );
     }
+
     if (priceMin) {
-      query = query.gte('price', parseFloat(priceMin));
+      query = query.gte('price', Number(priceMin));
     }
+
     if (priceMax) {
-      query = query.lte('price', parseFloat(priceMax));
+      query = query.lte('price', Number(priceMax));
     }
 
-    // Sort order
-    query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+    query = query.order(sortBy, {
+      ascending: sortOrder === 'asc'
+    });
 
-    // Pagination (only apply if limit is present and valid)
     if (limit && limit !== 'all') {
-      const parsedPage = parseInt(page);
-      const parsedLimit = parseInt(limit);
+      const parsedPage = Math.max(parseInt(page, 10) || 1, 1);
+      const parsedLimit = Math.max(parseInt(limit, 10) || 50, 1);
+
       const from = (parsedPage - 1) * parsedLimit;
       const to = from + parsedLimit - 1;
+
       query = query.range(from, to);
     }
 
     const { data, error } = await query;
 
     if (error) {
-      return res.status(400).json({ success: false, error: error.message });
+      return res.status(400).json({
+        success: false,
+        error: error.message
+      });
     }
 
-    // The Next.js frontend expects the raw array from fetch('/api/products')
     res.status(200).json(data || []);
   } catch (err) {
     next(err);
@@ -66,7 +87,14 @@ export const getProductById = async (req, res, next) => {
     const { id } = req.params;
     const { data, error } = await supabase
       .from('products')
-      .select('*')
+      .select(`
+        *,
+        categories (
+          id,
+          name,
+          slug
+        )
+      `)
       .eq('id', id)
       .single();
 
@@ -100,6 +128,11 @@ export const createProduct = async (req, res, next) => {
       artisan_notes
     } = req.body;
 
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!category_id || !uuidRegex.test(category_id)) {
+      return res.status(400).json({ success: false, error: 'Invalid or missing category_id UUID' });
+    }
+
     const { data, error } = await supabaseAdmin
       .from('products')
       .insert({
@@ -114,12 +147,19 @@ export const createProduct = async (req, res, next) => {
         zoom_image_url,
         colors,
         is_featured,
-        active,
+        active: active !== undefined ? active : true,
         fabric,
         embroidery,
         artisan_notes
       })
-      .select()
+      .select(`
+        *,
+        categories (
+          id,
+          name,
+          slug
+        )
+      `)
       .single();
 
     if (error) {
@@ -135,11 +175,39 @@ export const createProduct = async (req, res, next) => {
 export const updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
+
+    const allowedFields = [
+      'name', 'slug', 'description', 'price', 'discount_price', 'stock',
+      'category_id', 'image_url', 'zoom_image_url', 'colors', 'is_featured',
+      'active', 'fabric', 'embroidery', 'artisan_notes'
+    ];
+
+    const updateData = {};
+    allowedFields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        updateData[field] = req.body[field];
+      }
+    });
+
+    if (updateData.category_id !== undefined) {
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!updateData.category_id || !uuidRegex.test(updateData.category_id)) {
+        return res.status(400).json({ success: false, error: 'Invalid category_id UUID' });
+      }
+    }
+
     const { data, error } = await supabaseAdmin
       .from('products')
-      .update(req.body)
+      .update(updateData)
       .eq('id', id)
-      .select()
+      .select(`
+        *,
+        categories (
+          id,
+          name,
+          slug
+        )
+      `)
       .single();
 
     if (error) {
@@ -172,26 +240,34 @@ export const deleteProduct = async (req, res, next) => {
 
 export const getProductsMeta = async (req, res, next) => {
   try {
-    const { data, error } = await supabase
+    const { data: prodData, error: prodError } = await supabaseAdmin
       .from('products')
-      .select('category, fabric, embroidery');
+      .select('fabric, embroidery');
 
-    if (error) {
-      return res.status(400).json({ success: false, error: error.message });
+    if (prodError) {
+      return res.status(400).json({ success: false, error: prodError.message });
     }
 
-    const categories = new Set();
+    const { data: catData, error: catError } = await supabaseAdmin
+      .from('categories')
+      .select('id, name, slug, active')
+      .eq('active', true)
+      .order('name');
+
+    if (catError) {
+      return res.status(400).json({ success: false, error: catError.message });
+    }
+
     const fabrics = new Set();
     const embroideries = new Set();
 
-    (data || []).forEach(row => {
-      if (row.category) categories.add(row.category);
+    (prodData || []).forEach(row => {
       if (row.fabric) fabrics.add(row.fabric);
       if (row.embroidery) embroideries.add(row.embroidery);
     });
 
     res.status(200).json({
-      categories: Array.from(categories),
+      categories: catData || [],
       fabrics: Array.from(fabrics),
       embroideries: Array.from(embroideries)
     });

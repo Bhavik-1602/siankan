@@ -351,7 +351,7 @@ export default function Home() {
                 <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-neutral-950 via-neutral-900/40 to-transparent p-6 text-white" draggable={false}>
                   <div>
                     <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#FAF8F5]/75">
-                      {p.category_id ? "Siankan Couture" : "Signature"}
+                      {p.categories?.name || "Siankan Couture"}
                     </p>
                     <h3 className="mt-1 font-editorial text-xl font-light leading-snug tracking-wide text-white">
                       {p.name.split(" ").slice(0, 3).join(" ")}

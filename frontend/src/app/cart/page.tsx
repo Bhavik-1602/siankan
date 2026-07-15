@@ -63,7 +63,7 @@ export default function Cart() {
               {/* Item Details */}
               <div className="flex-grow space-y-2 w-full">
                 <span className="text-gold-400 text-[9px] font-bold uppercase tracking-wider block">
-                  {item.product.category} • {item.product.fabric}
+                  {item.product.categories?.name || item.product.category || 'Couture'} • {item.product.fabric}
                 </span>
                 
                 <h3 className="font-editorial text-base sm:text-lg text-neutral-800 hover:text-maroon-600 transition-colors leading-snug">

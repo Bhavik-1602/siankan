@@ -15,20 +15,24 @@ export default function AdminProductsPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [discountPrice, setDiscountPrice] = useState('');
-  const [category, setCategory] = useState('');
-  const [fabric, setFabric] = useState('');
-  const [colorsInput, setColorsInput] = useState('');
-  const [embroidery, setEmbroidery] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [zoomImageUrl, setZoomImageUrl] = useState('');
-  const [stock, setStock] = useState('10');
-  const [isFeatured, setIsFeatured] = useState(false);
-  const [artisanNotes, setArtisanNotes] = useState('');
-  const [slug, setSlug] = useState('');
+  
+  // Single formData state
+  const [formData, setFormData] = useState({
+    name: '',
+    slug: '',
+    description: '',
+    price: '',
+    discount_price: '',
+    category_id: '',
+    fabric: '',
+    colorsInput: '',
+    embroidery: '',
+    image_url: '',
+    zoom_image_url: '',
+    stock: '10',
+    is_featured: false,
+    artisan_notes: ''
+  });
 
   // Modal and Toast state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,10 +61,16 @@ export default function AdminProductsPage() {
       }
 
       if (type === 'main') {
-        setImageUrl(res.url || '');
+        setFormData(prev => ({
+          ...prev,
+          image_url: res.url || ''
+        }));
         showToast('Main image uploaded successfully to Supabase Storage!');
       } else {
-        setZoomImageUrl(res.url || '');
+        setFormData(prev => ({
+          ...prev,
+          zoom_image_url: res.url || ''
+        }));
         showToast('Detail image uploaded successfully to Supabase Storage!');
       }
     } catch (err: any) {
@@ -115,40 +125,98 @@ export default function AdminProductsPage() {
       setLoading(true);
       Promise.all([getProducts(), getCategories(true)]).then(([prods, cats]) => {
         setProducts(prods || []); setCategories(cats || []);
-        if (cats?.length > 0) setCategory(cats[0].name);
+        if (cats?.length > 0) {
+          setFormData(prev => ({ ...prev, category_id: cats[0].id }));
+        }
         setLoading(false);
       });
     }
   }, [user]);
 
   const handleNameChange = (val: string) => {
-    setName(val);
-    setSlug(val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''));
+    setFormData(prev => ({
+      ...prev,
+      name: val,
+      slug: val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); setError(null);
-    const colors = colorsInput.split(',').map(c => c.trim()).filter(Boolean);
-    const payload = { name, description, price: parseFloat(price), discount_price: discountPrice ? parseFloat(discountPrice) : null, category, fabric, colors, embroidery, image_url: imageUrl, zoom_image_url: zoomImageUrl || null, stock: parseInt(stock), is_featured: isFeatured, artisan_notes: artisanNotes || null, slug };
+
+    const name = formData.name.trim();
+    const slug = formData.slug.trim();
+    const priceNum = parseFloat(formData.price);
+    const discountPriceNum = formData.discount_price ? parseFloat(formData.discount_price) : null;
+    const stockNum = parseInt(formData.stock, 10);
+    const category_id = formData.category_id;
+    const image_url = formData.image_url.trim();
+
+    if (!name) {
+      showToast('Product name is required', 'error');
+      return;
+    }
+    if (!slug) {
+      showToast('Product slug is required', 'error');
+      return;
+    }
+    if (isNaN(priceNum) || priceNum < 0) {
+      showToast('Product price must be a valid non-negative number', 'error');
+      return;
+    }
+    if (discountPriceNum !== null && (isNaN(discountPriceNum) || discountPriceNum < 0)) {
+      showToast('Discount price must be a valid non-negative number', 'error');
+      return;
+    }
+    if (!category_id) {
+      showToast('Product category is required', 'error');
+      return;
+    }
+    if (!image_url) {
+      showToast('Product main image is required', 'error');
+      return;
+    }
+
+    const colors = formData.colorsInput.split(',').map(c => c.trim()).filter(Boolean);
+
+    const productPayload = {
+      name,
+      slug,
+      description: formData.description.trim() || null,
+      price: priceNum,
+      discount_price: discountPriceNum,
+      category_id,
+      fabric: formData.fabric.trim() || null,
+      colors,
+      embroidery: formData.embroidery.trim() || null,
+      image_url,
+      zoom_image_url: formData.zoom_image_url.trim() || null,
+      stock: isNaN(stockNum) ? 0 : stockNum,
+      is_featured: formData.is_featured,
+      artisan_notes: formData.artisan_notes.trim() || null
+    };
+
+    console.log("Final product payload:", productPayload);
+
     try {
       if (editingId) {
-        const res = await updateProduct(editingId, payload as any);
+        const res = await updateProduct(editingId, productPayload as any);
         if (res?.success) { 
           setProducts(products.map(p => p.id === editingId ? res.product : p)); 
           resetForm(); 
           showToast('Product updated successfully!');
         } else {
-          showToast('Failed to update product', 'error');
+          showToast((res as any)?.error || 'Failed to update product', 'error');
         }
       } else {
-        const res = await createProduct(payload as any);
+        const res = await createProduct(productPayload as any);
         if (res?.success) { 
           setProducts([res.product, ...products]); 
           resetForm(); 
           showToast('Product created successfully!');
         } else {
-          setError('Failed to create product.');
-          showToast('Failed to create product', 'error');
+          setError((res as any)?.error || 'Failed to create product.');
+          showToast((res as any)?.error || 'Failed to create product', 'error');
         }
       }
     } catch (err: any) { 
@@ -158,11 +226,23 @@ export default function AdminProductsPage() {
   };
 
   const handleEditClick = (p: any) => {
-    setEditingId(p.id); setName(p.name); setSlug(p.slug || ''); setDescription(p.description || '');
-    setPrice(p.price.toString()); setDiscountPrice(p.discount_price ? p.discount_price.toString() : '');
-    setCategory(p.category); setFabric(p.fabric || ''); setColorsInput(p.colors ? p.colors.join(', ') : '');
-    setEmbroidery(p.embroidery || ''); setImageUrl(p.image_url); setZoomImageUrl(p.zoom_image_url || '');
-    setStock((p.stock || 0).toString()); setIsFeatured(!!p.is_featured); setArtisanNotes(p.artisan_notes || '');
+    setEditingId(p.id);
+    setFormData({
+      name: p.name || '',
+      slug: p.slug || '',
+      description: p.description || '',
+      price: p.price ? p.price.toString() : '',
+      discount_price: p.discount_price ? p.discount_price.toString() : '',
+      category_id: p.category_id || '',
+      fabric: p.fabric || '',
+      colorsInput: p.colors ? p.colors.join(', ') : '',
+      embroidery: p.embroidery || '',
+      image_url: p.image_url || '',
+      zoom_image_url: p.zoom_image_url || '',
+      stock: p.stock !== undefined ? p.stock.toString() : '0',
+      is_featured: !!p.is_featured,
+      artisan_notes: p.artisan_notes || ''
+    });
     setIsModalOpen(true);
   };
 
@@ -181,10 +261,22 @@ export default function AdminProductsPage() {
   const resetForm = () => {
     setEditingId(null);
     setIsModalOpen(false);
-    setName(''); setDescription(''); setPrice(''); setDiscountPrice('');
-    if (categories.length > 0) setCategory(categories[0].name);
-    setFabric(''); setColorsInput(''); setEmbroidery(''); setImageUrl(''); setZoomImageUrl('');
-    setStock('10'); setIsFeatured(false); setArtisanNotes(''); setSlug('');
+    setFormData({
+      name: '',
+      slug: '',
+      description: '',
+      price: '',
+      discount_price: '',
+      category_id: categories.length > 0 ? categories[0].id : '',
+      fabric: '',
+      colorsInput: '',
+      embroidery: '',
+      image_url: '',
+      zoom_image_url: '',
+      stock: '10',
+      is_featured: false,
+      artisan_notes: ''
+    });
   };
 
   if (authLoading || loading) return <div className="admin-loading">Loading product catalog…</div>;
@@ -204,13 +296,18 @@ export default function AdminProductsPage() {
         <button
           onClick={() => { resetForm(); setIsModalOpen(true); }}
           className="admin-btn-primary"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
         >
-          + Add Product
+          <span>+ Add Product</span>
         </button>
       </div>
 
-      {error && <div className="admin-error">{error}</div>}
+      {/* Error Banner */}
+      {error && (
+        <div style={{ background: 'oklch(0.95 0.05 30)', border: '1px solid oklch(0.85 0.1 30)', color: 'oklch(0.4 0.15 30)', padding: '14px 20px', borderRadius: '12px', fontSize: '13px', fontWeight: 550 }}>
+          {error}
+        </div>
+      )}
 
       {/* Catalogue list - Full Width */}
       <section className="admin-panel w-full">
@@ -234,7 +331,9 @@ export default function AdminProductsPage() {
                   </div>
                   <p style={{ fontSize: '12px', color: 'oklch(0.52 0.014 65)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '3px' }}>{p.description}</p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
-                    <span style={{ background: 'oklch(0.945 0.01 82)', color: 'oklch(0.22 0.012 60)', padding: '2px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{p.category}</span>
+                    <span style={{ background: 'oklch(0.945 0.01 82)', color: 'oklch(0.22 0.012 60)', padding: '2px 8px', borderRadius: '4px', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      {p.categories?.name || p.category_name || "Uncategorized"}
+                    </span>
                     <span style={{ fontSize: '10px', color: p.stock === 0 ? 'oklch(0.55 0.2 27)' : 'oklch(0.52 0.014 65)', fontWeight: 600 }}>Stock: {p.stock || 0}</span>
                     {p.is_featured && <span style={{ fontSize: '10px', color: 'oklch(0.72 0.14 75)', fontWeight: 700 }}>★ Featured</span>}
                   </div>
@@ -258,34 +357,17 @@ export default function AdminProductsPage() {
             left: 0,
             right: 0,
             bottom: 0,
-            zIndex: 1000,
+            background: 'rgba(0, 0, 0, 0.4)',
+            backdropFilter: 'blur(4px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '16px',
-            boxSizing: 'border-box',
+            zIndex: 1000,
+            padding: '20px',
           }}
         >
-          {/* Backdrop overlay */}
           <div
-            onClick={resetForm}
             style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.4)',
-              backdropFilter: 'blur(4px)',
-            }}
-          />
-
-          {/* Modal Content container */}
-          <div
-            className="admin-panel no-scrollbar"
-            style={{
-              position: 'relative',
-              zIndex: 1001,
               width: '100%',
               maxWidth: '600px',
               maxHeight: '90vh',
@@ -317,35 +399,40 @@ export default function AdminProductsPage() {
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div><label style={lbl}>Name</label><input type="text" required value={name} onChange={e => handleNameChange(e.target.value)} style={inp} placeholder="Crimson Kanjivaram Saree" /></div>
-              <div><label style={lbl}>Description</label><textarea required value={description} onChange={e => setDescription(e.target.value)} rows={3} style={{ ...inp, resize: 'vertical' }} placeholder="Describe the product…" /></div>
+              <div><label style={lbl}>Name</label><input type="text" required value={formData.name} onChange={e => handleNameChange(e.target.value)} style={inp} placeholder="Crimson Kanjivaram Saree" /></div>
+              <div><label style={lbl}>Description</label><textarea required value={formData.description} onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))} rows={3} style={{ ...inp, resize: 'vertical' }} placeholder="Describe the product…" /></div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div><label style={lbl}>Price (₹)</label><input type="number" required value={price} onChange={e => setPrice(e.target.value)} style={inp} placeholder="12000" /></div>
-                <div><label style={lbl}>Discount Price</label><input type="number" value={discountPrice} onChange={e => setDiscountPrice(e.target.value)} style={inp} placeholder="Optional" /></div>
+                <div><label style={lbl}>Price (₹)</label><input type="number" required value={formData.price} onChange={e => setFormData(prev => ({ ...prev, price: e.target.value }))} style={inp} placeholder="12000" /></div>
+                <div><label style={lbl}>Discount Price</label><input type="number" value={formData.discount_price} onChange={e => setFormData(prev => ({ ...prev, discount_price: e.target.value }))} style={inp} placeholder="Optional" /></div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label style={lbl}>Category</label>
-                  <select value={category} onChange={e => setCategory(e.target.value)} style={{ ...inp, cursor: 'pointer' }}>
-                    {categories.map(cat => <option key={cat.id} value={cat.name}>{cat.name}</option>)}
+                  <select 
+                    name="category_id" 
+                    value={formData.category_id} 
+                    onChange={e => setFormData(prev => ({ ...prev, category_id: e.target.value }))} 
+                    style={{ ...inp, cursor: 'pointer' }}
+                  >
+                    {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                   </select>
                 </div>
-                <div><label style={lbl}>Stock Qty</label><input type="number" required min="0" value={stock} onChange={e => setStock(e.target.value)} style={inp} /></div>
+                <div><label style={lbl}>Stock Qty</label><input type="number" required min="0" value={formData.stock} onChange={e => setFormData(prev => ({ ...prev, stock: e.target.value }))} style={inp} /></div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div><label style={lbl}>Fabric</label><input type="text" value={fabric} onChange={e => setFabric(e.target.value)} style={inp} placeholder="Pure Katan Silk" /></div>
-                <div><label style={lbl}>Embroidery</label><input type="text" value={embroidery} onChange={e => setEmbroidery(e.target.value)} style={inp} placeholder="Zardosi Handwork" /></div>
+                <div><label style={lbl}>Fabric</label><input type="text" value={formData.fabric} onChange={e => setFormData(prev => ({ ...prev, fabric: e.target.value }))} style={inp} placeholder="Pure Katan Silk" /></div>
+                <div><label style={lbl}>Embroidery</label><input type="text" value={formData.embroidery} onChange={e => setFormData(prev => ({ ...prev, embroidery: e.target.value }))} style={inp} placeholder="Zardosi Handwork" /></div>
               </div>
 
-              <div><label style={lbl}>Colours (comma-separated)</label><input type="text" value={colorsInput} onChange={e => setColorsInput(e.target.value)} style={inp} placeholder="Blush Pink, Mint Green" /></div>
+              <div><label style={lbl}>Colours (comma-separated)</label><input type="text" value={formData.colorsInput} onChange={e => setFormData(prev => ({ ...prev, colorsInput: e.target.value }))} style={inp} placeholder="Blush Pink, Mint Green" /></div>
               
               <div>
                 <label style={lbl}>Main Image URL</label>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                  <input type="text" required value={imageUrl} onChange={e => setImageUrl(e.target.value)} style={{ ...inp, flex: 1 }} placeholder="https://…" />
+                  <input type="text" required value={formData.image_url} onChange={e => setFormData(prev => ({ ...prev, image_url: e.target.value }))} style={{ ...inp, flex: 1 }} placeholder="https://…" />
                   <label style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -379,7 +466,7 @@ export default function AdminProductsPage() {
               <div>
                 <label style={lbl}>Zoom / Detail Image URL</label>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                  <input type="text" value={zoomImageUrl} onChange={e => setZoomImageUrl(e.target.value)} style={{ ...inp, flex: 1 }} placeholder="https://…" />
+                  <input type="text" value={formData.zoom_image_url} onChange={e => setFormData(prev => ({ ...prev, zoom_image_url: e.target.value }))} style={{ ...inp, flex: 1 }} placeholder="https://…" />
                   <label style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -410,11 +497,11 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
-              <div><label style={lbl}>Artisan Story Notes</label><textarea value={artisanNotes} onChange={e => setArtisanNotes(e.target.value)} rows={2} style={{ ...inp, resize: 'vertical' }} placeholder="Handcrafted over 14 days…" /></div>
-              <div><label style={lbl}>URL Slug</label><input type="text" required value={slug} onChange={e => setSlug(e.target.value)} style={{ ...inp, background: 'oklch(0.945 0.01 82)', color: 'oklch(0.52 0.014 65)' }} placeholder="crimson-kanjivaram-saree" /></div>
+              <div><label style={lbl}>Artisan Story Notes</label><textarea value={formData.artisan_notes} onChange={e => setFormData(prev => ({ ...prev, artisan_notes: e.target.value }))} rows={2} style={{ ...inp, resize: 'vertical' }} placeholder="Handcrafted over 14 days…" /></div>
+              <div><label style={lbl}>URL Slug</label><input type="text" required value={formData.slug} onChange={e => setFormData(prev => ({ ...prev, slug: e.target.value }))} style={{ ...inp, background: 'oklch(0.945 0.01 82)', color: 'oklch(0.52 0.014 65)' }} placeholder="crimson-kanjivaram-saree" /></div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingTop: '4px' }}>
-                <input type="checkbox" id="isFeatured" checked={isFeatured} onChange={e => setIsFeatured(e.target.checked)} style={{ width: '16px', height: '16px', accentColor: 'oklch(0.59 0.155 42)', cursor: 'pointer' }} />
+                <input type="checkbox" id="isFeatured" checked={formData.is_featured} onChange={e => setFormData(prev => ({ ...prev, is_featured: e.target.checked }))} style={{ width: '16px', height: '16px', accentColor: 'oklch(0.59 0.155 42)', cursor: 'pointer' }} />
                 <label htmlFor="isFeatured" style={{ fontSize: '12px', color: 'oklch(0.22 0.012 60)', cursor: 'pointer' }}>Pin / Feature on Homepage</label>
               </div>
 

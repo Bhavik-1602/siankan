@@ -150,7 +150,7 @@ export default function ProductDetail() {
           {/* Main info header */}
           <div className="space-y-2 pb-6 border-b border-stone-150">
             <span className="text-xs font-bold tracking-[0.2em] text-[#D4AF37] uppercase">
-              {product.category} Collection
+              {product.categories?.name || product.category || 'Couture'} Collection
             </span>
             <h1 className="font-serif text-3xl font-bold text-neutral-800 leading-tight">
               {product.name}

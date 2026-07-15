@@ -89,7 +89,7 @@ export default function WishlistPage() {
 
               <div className="p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{item.products.category}</span>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{item.products.categories?.name || item.products.category || 'Couture'}</span>
                   <h4 className="font-serif text-md text-[#4A0E17] font-medium mt-1 mb-2">{item.products.name}</h4>
                   <span className="font-serif text-[#4A0E17] font-bold">₹{item.products.price.toLocaleString()}</span>
                 </div>
