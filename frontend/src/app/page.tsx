@@ -4,10 +4,9 @@ import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ZoomParallax } from "@/components/ZoomParallax";
 import { Product } from "@/lib/mockData";
+import HeroSection from "@/components/HeroSection";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -24,7 +23,6 @@ const stagger = {
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const parallaxRef = useRef<HTMLDivElement>(null);
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const interactTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -142,124 +140,15 @@ export default function Home() {
     loadProducts();
   }, []);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    gsap.registerPlugin(ScrollTrigger);
-    const trigger = parallaxRef.current?.querySelector("[data-parallax-layers]");
-    let tl: gsap.core.Timeline | undefined;
-
-    if (trigger) {
-      tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: trigger as Element,
-          start: "0% 0%",
-          end: "100% 0%",
-          scrub: 0,
-        },
-      });
-
-      const layers = [
-        { layer: "1", yPercent: 70 },
-        { layer: "2", yPercent: 55 },
-        { layer: "3", yPercent: 40 },
-        { layer: "4", yPercent: 10 },
-      ];
-
-      layers.forEach((l, idx) => {
-        tl!.to(
-          (trigger as Element).querySelectorAll(`[data-parallax-layer="${l.layer}"]`),
-          { yPercent: l.yPercent, ease: "none" },
-          idx === 0 ? undefined : "<",
-        );
-      });
-    }
-
-    return () => {
-      if (tl) {
-        tl.scrollTrigger?.kill();
-        tl.kill();
-      }
-    };
-  }, [loading]);
-
   const featured = products.filter((p) => p.is_featured);
   
   // Fallbacks in case products list is empty
-  const heroImage = "/images/group_2.jpg";
   const storyImage = "/images/blue_dress_model.jpg";
 
   return (
     <div className="overflow-hidden bg-[#FAF8F5]">
-      {/* Parallax Hero Section */}
-      <section ref={parallaxRef} className="relative isolate overflow-hidden bg-neutral-950">
-        <div
-          data-parallax-layers
-          className="relative h-[95vh] min-h-[620px] w-full overflow-hidden"
-        >
-          <div
-            data-parallax-layer="1"
-            className="absolute inset-0 will-change-transform"
-            style={{
-              backgroundImage: `url(${heroImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center 30%",
-              transform: "scale(1.3)",
-            }}
-          />
-          <div
-            data-parallax-layer="2"
-            className="absolute inset-0 bg-gradient-to-b from-neutral-950/20 via-neutral-950/50 to-neutral-950/90 will-change-transform"
-          />
-          <div
-            data-parallax-layer="3"
-            className="absolute inset-x-0 top-[20%] flex justify-center will-change-transform"
-          >
-            <p className="text-[10px] uppercase tracking-[0.4em] text-[#FAF8F5]/80 font-semibold">
-              The Utsav Collection · Summer '26
-            </p>
-          </div>
-          <div
-            data-parallax-layer="4"
-            className="absolute inset-0 flex items-end will-change-transform"
-          >
-            <div className="mx-auto w-full max-w-5xl px-6 pb-24 text-white">
-              <h1 className="max-w-3xl font-editorial text-5xl sm:text-7xl font-light leading-[1.05] tracking-wide text-[#FAF8F5]">
-                {"Hand-dyed heirlooms, made to move.".split(" ").map((w, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ y: 60, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 + i * 0.08, duration: 0.9, ease }}
-                    className="mr-4 inline-block font-light"
-                  >
-                    {w}
-                  </motion.span>
-                ))}
-              </h1>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.9, duration: 0.8, ease }}
-                className="mt-10 flex flex-wrap gap-4"
-              >
-                <Link
-                  href="/collections"
-                  className="inline-flex items-center gap-3 bg-white px-7 py-4 text-[10px] uppercase tracking-[0.25em] text-neutral-950 font-bold hover:bg-neutral-100 transition-colors shadow-lg rounded-sm"
-                >
-                  Shop the Collection <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-                <Link
-                  href="/about"
-                  className="inline-flex items-center gap-3 border border-white/70 px-7 py-4 text-[10px] uppercase tracking-[0.25em] text-white hover:bg-white hover:text-neutral-950 transition-colors rounded-sm"
-                >
-                  Our Story
-                </Link>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Hero Section */}
+      <HeroSection />
 
       {/* Info Bar */}
       <section className="border-y border-neutral-200/50 bg-[#FAF8F5]">
@@ -378,15 +267,23 @@ export default function Home() {
           </p>
         </div>
         
-        {products.length > 0 ? (
-          <ZoomParallax
-            images={featured.slice(0, 7).map((p) => ({ src: p.image_url, alt: p.name }))}
-          />
-        ) : (
-          <div className="h-64 flex items-center justify-center text-xs text-neutral-500 uppercase tracking-widest">
-            Loading Gallery...
-          </div>
-        )}
+        <ZoomParallax
+          images={
+            products.length > 0
+              ? (featured.length > 0 ? featured : products)
+                  .slice(0, 7)
+                  .map((p) => ({ src: p.image_url, alt: p.name }))
+              : [
+                  { src: "/images/hero_image.jpg", alt: "Siankan Festive Wear" },
+                  { src: "/images/blue_dress_model.jpg", alt: "Siankan Signature Dress" },
+                  { src: "/images/group_2.jpg", alt: "Siankan Utsav Collection" },
+                  { src: "/images/group_1.jpg", alt: "Siankan Group Collection" },
+                  { src: "/images/kiran.jpg", alt: "Siankan Silk Saree" },
+                  { src: "/images/nisha.jpg", alt: "Siankan Lehenga" },
+                  { src: "/images/minjal.jpg", alt: "Siankan Bridal Wear" },
+                ]
+          }
+        />
       </section>
 
       {/* Craft story Section */}

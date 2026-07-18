@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { useScroll, useTransform, motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 interface Image {
   src: string;
@@ -12,48 +12,96 @@ interface ZoomParallaxProps {
   images: Image[];
 }
 
-// Inline dimensions and offsets to position the items in the grid.
-// transform: translate(X, Y) relative to the centered parent container.
 const positions = [
-  { width: "25vw", height: "25vh", top: "0", left: "0" }, // Center image
-  { width: "35vw", height: "30vh", top: "-30vh", left: "5vw" }, // Top-Right
-  { width: "20vw", height: "45vh", top: "-10vh", left: "-25vw" }, // Top-Left
-  { width: "25vw", height: "25vh", top: "0", left: "27.5vw" }, // Middle-Right
-  { width: "20vw", height: "25vh", top: "27.5vh", left: "5vw" }, // Bottom-Right
-  { width: "30vw", height: "25vh", top: "27.5vh", left: "-22.5vw" }, // Bottom-Left
-  { width: "15vw", height: "15vh", top: "22.5vh", left: "25vw" }, // Small Middle-Far Right
+  { width: "25vw", height: "25vh", top: "0", left: "0" },
+  { width: "35vw", height: "30vh", top: "-30vh", left: "5vw" },
+  { width: "20vw", height: "45vh", top: "-10vh", left: "-25vw" },
+  { width: "25vw", height: "25vh", top: "0", left: "27.5vw" },
+  { width: "20vw", height: "25vh", top: "27.5vh", left: "5vw" },
+  { width: "30vw", height: "25vh", top: "27.5vh", left: "-22.5vw" },
+  { width: "15vw", height: "15vh", top: "22.5vh", left: "25vw" },
 ];
 
 export function ZoomParallax({ images }: ZoomParallaxProps) {
   const container = useRef<HTMLDivElement>(null);
+
   const { scrollYProgress } = useScroll({
     target: container,
     offset: ["start start", "end end"],
   });
 
-  const scale4 = useTransform(scrollYProgress, [0, 1], [1, 4]);
-  const scale5 = useTransform(scrollYProgress, [0, 1], [1, 5]);
-  const scale6 = useTransform(scrollYProgress, [0, 1], [1, 6]);
-  const scale8 = useTransform(scrollYProgress, [0, 1], [1, 8]);
-  const scale9 = useTransform(scrollYProgress, [0, 1], [1, 9]);
+  /*
+   * Complete the zoom slightly before the section ends.
+   * The last part holds the final image instead of showing empty black space.
+   */
+  const scale4 = useTransform(
+    scrollYProgress,
+    [0, 0.85, 1],
+    [1, 4.5, 4.5]
+  );
 
-  const scales = [scale4, scale5, scale6, scale5, scale6, scale8, scale9];
+  const scale5 = useTransform(
+    scrollYProgress,
+    [0, 0.85, 1],
+    [1, 5, 5]
+  );
+
+  const scale6 = useTransform(
+    scrollYProgress,
+    [0, 0.85, 1],
+    [1, 6, 6]
+  );
+
+  const scale8 = useTransform(
+    scrollYProgress,
+    [0, 0.85, 1],
+    [1, 8, 8]
+  );
+
+  const scale9 = useTransform(
+    scrollYProgress,
+    [0, 0.85, 1],
+    [1, 9, 9]
+  );
+
+  const scales = [
+    scale4,
+    scale5,
+    scale6,
+    scale5,
+    scale6,
+    scale8,
+    scale9,
+  ];
 
   return (
-    <div ref={container} className="relative h-[300vh]">
+    /*
+     * Changed from 300vh to 220vh.
+     * This removes the excessive scroll area.
+     */
+    <div   
+      ref={container}
+      className="relative h-[160vh] bg-neutral-950"
+    >
       <div className="sticky top-0 h-screen overflow-hidden bg-neutral-950">
         {images.slice(0, 7).map(({ src, alt }, index) => {
           const scale = scales[index % scales.length];
-          const pos = positions[index] || { width: "25vw", height: "25vh", top: "0", left: "0" };
+
+          const pos = positions[index] ?? {
+            width: "25vw",
+            height: "25vh",
+            top: "0",
+            left: "0",
+          };
 
           return (
             <motion.div
-              key={index}
+              key={`${src}-${index}`}
               style={{ scale }}
               className="absolute inset-0 flex h-full w-full items-center justify-center"
             >
               <div
-                className="relative overflow-hidden rounded-sm shadow-2xl border border-white/5 transition-shadow duration-300"
+                className="relative overflow-hidden rounded-sm border border-white/5 shadow-2xl"
                 style={{
                   width: pos.width,
                   height: pos.height,
@@ -64,6 +112,7 @@ export function ZoomParallax({ images }: ZoomParallaxProps) {
                   src={src}
                   alt={alt ?? ""}
                   className="h-full w-full object-cover"
+                  draggable={false}
                 />
               </div>
             </motion.div>
@@ -71,5 +120,5 @@ export function ZoomParallax({ images }: ZoomParallaxProps) {
         })}
       </div>
     </div>
-  );
+  );   
 }

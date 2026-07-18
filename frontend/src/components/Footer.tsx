@@ -15,7 +15,7 @@ export default function Footer() {
             <img 
               src="/logo.jpeg" 
               alt="SIANKAN" 
-              className="h-14 w-auto object-contain invert brightness-0" 
+              className="h-14 w-auto object-contain" 
             />
           </Link>
           <p className="text-xs leading-relaxed text-neutral-400 font-light max-w-xs">

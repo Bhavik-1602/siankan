@@ -80,33 +80,16 @@ export default function Navbar() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         onMouseLeave={() => setHovered(null)}
-        className={`sticky top-0 z-40 border-b transition-all duration-500 ${
+        className={`z-40 border-b transition-all duration-500 ${
+          pathname === '/' ? 'fixed top-0 left-0 w-full' : 'sticky top-0'
+        } ${
           scrolled
             ? 'border-white/10 bg-neutral-950/95 backdrop-blur-lg text-white shadow-lg'
-            : 'border-transparent bg-neutral-950 text-white'
+            : pathname === '/'
+              ? 'border-transparent bg-transparent text-white'
+              : 'border-transparent bg-neutral-950 text-white'
         }`}
       >
-        {/* Announcement Bar */}
-        <div className="overflow-hidden border-b border-white/10 bg-[#FAF8F5] text-neutral-900">
-          <motion.div
-            initial={{ x: "0%" }}
-            animate={{ x: "-50%" }}
-            transition={{ duration: 25, ease: "linear", repeat: Infinity }}
-            className="flex whitespace-nowrap py-2.5 text-[9px] font-bold uppercase tracking-[0.32em]"
-            style={{ width: "max-content" }}
-          >
-            {Array.from({ length: 4 }).map((_, i) => (
-              <span key={i} className="inline-flex items-center gap-4 px-8">
-                <span>✦</span>
-                Complimentary shipping across India
-                <span>✦</span>
-                Handcrafted in small batches
-                <span>✦</span>
-                Made to order in 10–14 days
-              </span>
-            ))}
-          </motion.div>
-        </div>
 
         {/* Navigation Wrapper */}
         <div
@@ -121,22 +104,10 @@ export default function Navbar() {
               transition={{ type: "spring", stiffness: 260, damping: 18 }}
               src="/logo.jpeg"
               alt="SIANKAN"
-              className={`shrink-0 object-contain invert brightness-0 transition-all duration-500 ${
+              className={`shrink-0 object-contain transition-all duration-500 ${
                 scrolled ? 'h-9 w-9' : 'h-12 w-12'
               }`}
             />
-            <div className="hidden min-w-0 flex-col items-center leading-none md:flex">
-              <span
-                className={`truncate font-display tracking-[0.32em] text-[#FAF8F5] transition-all duration-500 ${
-                  scrolled ? 'text-base' : 'text-xl'
-                }`}
-              >
-                SIANKAN
-              </span>
-              <span className="mt-1 hidden text-[8px] uppercase tracking-[0.42em] text-white/50 lg:block">
-                Maison — Est. 2019
-              </span>
-            </div>
           </Link>
 
           {/* Desktop Navigation Links */}
