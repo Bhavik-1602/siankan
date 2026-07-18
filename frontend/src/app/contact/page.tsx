@@ -58,10 +58,10 @@ export default function Contact() {
           <h2 className="font-editorial text-2xl font-light text-neutral-800">Get in touch</h2>
           <div className="mt-8 space-y-6">
             {[
-              { Icon: Mail, l: "Email", v: "hello@siankan.com" },
-              { Icon: Phone, l: "Phone / WhatsApp", v: "+91 98765 43210" },
-              { Icon: MapPin, l: "Studio", v: "Surat, Gujarat · India" },
-              { Icon: Instagram, l: "Instagram", v: "@siankan.studio" },
+              { Icon: Mail, l: "Email", v: "na@siankan.com" },
+              { Icon: Phone, l: "Phone / WhatsApp", v: "+91 8141477327" },
+              { Icon: MapPin, l: "Studio", v: "rajkot, Gujarat · India" },
+              { Icon: Instagram, l: "Instagram", v: "na@siankan.com" },
             ].map(({ Icon, l, v }) => (
               <div key={l} className="flex items-start gap-4">
                 <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full bg-white border border-neutral-200 shadow-sm">

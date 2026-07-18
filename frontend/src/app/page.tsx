@@ -2,11 +2,12 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles, Shield, Compass, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { ZoomParallax } from "@/components/ZoomParallax";
 import { Product } from "@/lib/mockData";
 import HeroSection from "@/components/HeroSection";
+import ProductCard from "@/components/ProductCard";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -122,7 +123,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Fetch products from backend Express API
     const loadProducts = async () => {
       try {
         const res = await fetch("/api/products");
@@ -141,65 +141,158 @@ export default function Home() {
   }, []);
 
   const featured = products.filter((p) => p.is_featured);
-  
-  // Fallbacks in case products list is empty
   const storyImage = "/images/blue_dress_model.jpg";
 
+  // Collection categories definition for the new Featured Collections section
+  const collections = [
+    {
+      id: "bridal",
+      title: "Bridal Heritage",
+      subtitle: "The bridal trousseau collection",
+      description: "Intricately handwoven raw silks layered with heavy zardosi wiring and traditional floral motifs.",
+      image: "/images/minjal.jpg",
+      link: "/collections?category=lehenga"
+    },
+    {
+      id: "pastel",
+      title: "Pastel Alchemy",
+      subtitle: "Soft shades for spring drop",
+      description: "Whispering mint organzas, lavender georgettes, and blush pink silks woven for contemporary ease.",
+      image: "/images/pastel_saree.png",
+      link: "/collections?category=pastel"
+    },
+    {
+      id: "utsav",
+      title: "Utsav Festive",
+      subtitle: "Stitched for celebration",
+      description: "Real glass mirror chaniya cholis and heavy silk sweetheart blouses made in small boutique batches.",
+      image: "/images/group_2.jpg",
+      link: "/collections?category=festive"
+    }
+  ];
+
   return (
-    <div className="overflow-hidden bg-[#FAF8F5]">
+    <div className="overflow-hidden bg-[#FAF8F5] animate-page-fade-in">
       {/* Hero Section */}
       <HeroSection />
 
-      {/* Info Bar */}
-      <section className="border-y border-neutral-200/50 bg-[#FAF8F5]">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-12 gap-y-4 px-6 py-5 text-[10px] font-bold uppercase tracking-[0.28em] text-neutral-500">
-          {["Complimentary shipping over ₹5,000", "Made-to-order in 10–14 days", "Easy 7-day exchange"].map((t, i, arr) => (
-            <span key={t} className="contents">
-              <motion.span
-                initial={{ opacity: 0, y: 8 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5, ease }}
-              >
-                {t}
-              </motion.span>
-              {i < arr.length - 1 && <span className="hidden h-4 w-px bg-neutral-350 md:block" />}
-            </span>
+      {/* Info Announcement Bar */}
+      <section className="border-y border-[#f5e6d3]/30 bg-[#FAF8F5] relative z-10">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-16 gap-y-4 px-6 py-6 text-[9px] font-bold uppercase tracking-[0.3em] text-[#171717]/60">
+          <div className="flex items-center gap-2">
+            <Compass className="h-4 w-4 text-brand-terracotta" strokeWidth={1.5} />
+            <span>Complimentary shipping over ₹5,000</span>
+          </div>
+          <span className="hidden md:block h-4 w-px bg-stone-300/40" />
+          <div className="flex items-center gap-2">
+            <Shield className="h-4 w-4 text-brand-terracotta" strokeWidth={1.5} />
+            <span>Made-to-order in 10–14 days</span>
+          </div>
+          <span className="hidden md:block h-4 w-px bg-stone-300/40" />
+          <div className="flex items-center gap-2">
+            <Star className="h-4 w-4 text-brand-terracotta" strokeWidth={1.5} />
+            <span>Easy 7-day exchange policy</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Featured Collections (Editorial Grid Section) ── */}
+      <section className="mx-auto max-w-7xl px-6 py-28 sm:px-8">
+        <div className="mb-16 text-center space-y-3">
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-terracotta block">
+            Curated Lines
+          </span>
+          <h2 className="font-editorial text-4xl sm:text-5xl font-light text-stone-850 tracking-wide">
+            Featured Collections
+          </h2>
+          <div className="w-12 h-[1.5px] bg-brand-gold mx-auto" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {collections.map((col, index) => (
+            <motion.div
+              key={col.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: index * 0.15, ease }}
+              className="group flex flex-col bg-white border border-[#f5e6d3]/30 rounded-xs overflow-hidden shadow-sm hover:shadow-luxury transition-all duration-500"
+            >
+              {/* Image box */}
+              <div className="relative aspect-[4/5] w-full overflow-hidden select-none bg-stone-50 border-b border-[#f5e6d3]/10">
+                <img
+                  src={col.image}
+                  alt={col.title}
+                  className="w-full h-full object-cover transition-transform duration-[1400ms] group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-[#171717]/10 group-hover:bg-[#171717]/20 transition-colors duration-500" />
+              </div>
+
+              {/* Text info */}
+              <div className="p-8 space-y-4 flex-grow flex flex-col justify-between">
+                <div className="space-y-2">
+                  <span className="text-[8px] font-bold uppercase tracking-[0.25em] text-brand-terracotta block">
+                    {col.subtitle}
+                  </span>
+                  <h3 className="font-editorial text-2xl font-light text-stone-850">
+                    {col.title}
+                  </h3>
+                  <p className="text-xs font-light text-stone-500 leading-relaxed">
+                    {col.description}
+                  </p>
+                </div>
+
+                <div className="pt-4">
+                  <Link 
+                    href={col.link}
+                    className="group inline-flex items-center gap-3 text-[9px] font-bold uppercase tracking-[0.25em] text-brand-black hover:text-brand-terracotta transition-colors"
+                  >
+                    <span className="border-b border-[#171717] group-hover:border-brand-terracotta pb-1 transition-colors">
+                      Explore Collection
+                    </span>
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1.5" />
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
           ))}
         </div>
       </section>
 
       {/* Silhouette Headline */}
-      <section className="mx-auto max-w-7xl px-6 pt-24 pb-8">
+      <section className="mx-auto max-w-7xl px-6 pt-16 pb-8 sm:px-8">
         <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-80px" }}
           variants={stagger}
-          className="mb-12 flex items-end justify-between"
+          className="mb-12 flex items-end justify-between border-b border-stone-250/20 pb-6"
         >
           <div>
-            <motion.p variants={fadeUp} className="mb-2 text-[10px] font-bold uppercase tracking-[0.28em] text-maroon-600">
-              Shop by Silhouette
+            <motion.p variants={fadeUp} className="mb-2 text-[9px] font-bold uppercase tracking-[0.28em] text-brand-terracotta">
+              Atelier Silhouettes
             </motion.p>
-            <motion.h2 variants={fadeUp} className="font-editorial text-4xl sm:text-5xl font-light text-neutral-800 tracking-wide">
+            <motion.h2 variants={fadeUp} className="font-editorial text-4xl sm:text-5xl font-light text-stone-850 tracking-wide">
               Cut for celebration
             </motion.h2>
           </div>
           <motion.div variants={fadeUp}>
-            <Link href="/collections" className="hidden text-[10px] font-bold uppercase tracking-[0.22em] text-neutral-400 hover:text-maroon-600 transition-colors md:inline">
-              View all →
+            <Link 
+              href="/collections" 
+              className="text-[9px] font-bold uppercase tracking-[0.22em] text-[#171717]/50 hover:text-brand-terracotta transition-colors flex items-center gap-2 border-b border-stone-300 hover:border-brand-terracotta pb-1"
+            >
+              View Catalogue <ArrowRight className="h-3 w-3" />
             </Link>
           </motion.div>
         </motion.div>
       </section>
 
       {/* Product Sliding Carousel */}
-      <section className="relative overflow-hidden pb-24">
+      <section className="relative overflow-hidden pb-32">
         {products.length > 0 && (
           <div
             ref={carouselRef}
-            className="flex gap-6 overflow-x-auto no-scrollbar px-6 select-none"
+            className="flex gap-8 overflow-x-auto no-scrollbar px-6 sm:px-8 select-none"
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",
@@ -218,53 +311,36 @@ export default function Home() {
             onTouchEnd={handleTouchEnd}
           >
             {[...products, ...products, ...products].map((p, i) => (
-              <Link
+              <div
                 key={`${p.id}-${i}`}
-                href={`/product/${p.id}`}
+                className="w-[280px] shrink-0 block pointer-events-auto"
+                draggable={false}
                 onClick={(e) => {
                   if (isDragging) {
                     e.preventDefault();
                   }
                 }}
-                className="group relative block w-[280px] shrink-0 overflow-hidden bg-neutral-100 md:w-[340px] rounded-sm pointer-events-auto"
-                draggable={false}
               >
-                <div className="aspect-[3/4] overflow-hidden" draggable={false}>
-                  <img
-                    src={p.image_url}
-                    alt={p.name}
-                    className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110"
-                    draggable={false}
-                  />
-                </div>
-                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-neutral-950 via-neutral-900/40 to-transparent p-6 text-white" draggable={false}>
-                  <div>
-                    <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#FAF8F5]/75">
-                      {p.categories?.name || "Siankan Couture"}
-                    </p>
-                    <h3 className="mt-1 font-editorial text-xl font-light leading-snug tracking-wide text-white">
-                      {p.name.split(" ").slice(0, 3).join(" ")}
-                    </h3>
-                  </div>
-                  <span className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em]">
-                    Shop
-                    <span className="inline-block h-px w-6 bg-white transition-all duration-500 group-hover:w-12" />
-                  </span>
-                </div>
-              </Link>
+                <ProductCard product={p} />
+              </div>
             ))}
           </div>
         )}
       </section>
 
-      {/* Parallax Scroll Reveal */}
-      <section className="relative bg-neutral-950 text-white">
-        <div className="mx-auto max-w-7xl px-6 pt-24 pb-12 text-center">
-          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.28em] text-neutral-400">The Atelier</p>
-          <h2 className="font-editorial text-4xl sm:text-5xl font-light tracking-wide">New this season</h2>
-          <p className="mx-auto mt-4 max-w-xl text-xs font-light leading-relaxed text-neutral-400 uppercase tracking-widest">
+      {/* Parallax Scroll Reveal Section */}
+      <section className="relative bg-[#171717] text-white">
+        <div className="mx-auto max-w-7xl px-6 pt-28 pb-12 text-center space-y-4 relative z-10">
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold block">
+            Inside The Atelier
+          </span>
+          <h2 className="font-editorial text-4xl sm:text-5xl font-light tracking-wide text-brand-ivory">
+            New this season
+          </h2>
+          <p className="mx-auto max-w-xl text-[10px] font-medium leading-relaxed text-stone-400 uppercase tracking-widest">
             Scroll to reveal — each piece is hand-dyed, mirror-worked and finished in our Gujarat studio in tiny batches.
           </p>
+          <div className="w-10 h-[1px] bg-brand-gold/30 mx-auto pt-2" />
         </div>
         
         <ZoomParallax
@@ -274,71 +350,84 @@ export default function Home() {
                   .slice(0, 7)
                   .map((p) => ({ src: p.image_url, alt: p.name }))
               : [
-                  { src: "/images/hero_image.jpg", alt: "Siankan Festive Wear" },
-                  { src: "/images/blue_dress_model.jpg", alt: "Siankan Signature Dress" },
-                  { src: "/images/group_2.jpg", alt: "Siankan Utsav Collection" },
-                  { src: "/images/group_1.jpg", alt: "Siankan Group Collection" },
-                  { src: "/images/kiran.jpg", alt: "Siankan Silk Saree" },
-                  { src: "/images/nisha.jpg", alt: "Siankan Lehenga" },
-                  { src: "/images/minjal.jpg", alt: "Siankan Bridal Wear" },
+                  { src: "/images/hero_image.jpg", alt: "Sainkai Festive Wear" },
+                  { src: "/images/blue_dress_model.jpg", alt: "Sainkai Signature Dress" },
+                  { src: "/images/group_2.jpg", alt: "Sainkai Utsav Collection" },
+                  { src: "/images/group_1.jpg", alt: "Sainkai Group Collection" },
+                  { src: "/images/kiran.jpg", alt: "Sainkai Silk Saree" },
+                  { src: "/images/nisha.jpg", alt: "Sainkai Lehenga" },
+                  { src: "/images/minjal.jpg", alt: "Sainkai Bridal Wear" },
                 ]
           }
         />
       </section>
 
-      {/* Craft story Section */}
-      <section className="relative isolate mx-auto max-w-7xl px-6 py-32 bg-[#FAF8F5]">
+      {/* Craft Story Section */}
+      <section className="relative isolate mx-auto max-w-7xl px-6 py-36 bg-[#FAF8F5] sm:px-8">
         <div className="grid items-center gap-16 md:grid-cols-2">
           
+          {/* Story Left Image */}
           <motion.div
             initial={{ opacity: 0, x: -45 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 1, ease }}
-            className="relative overflow-hidden rounded-sm"
+            transition={{ duration: 1.0, ease }}
+            className="relative overflow-hidden rounded-xs border border-[#f5e6d3]/40 shadow-luxury"
           >
             <motion.img
               src={storyImage}
-              alt="Siankan Studio Work"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 1.4, ease }}
-              className="aspect-[4/5] w-full object-cover shadow-2xl"
+              alt="Sainkai Studio Work"
+              whileHover={{ scale: 1.04 }}
+              transition={{ duration: 1.2, ease }}
+              className="aspect-[4/5] w-full object-cover"
             />
+            
+            {/* Spinning Brand Badge */}
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 40, ease: "linear", repeat: Infinity }}
-              className="absolute -bottom-8 -right-8 hidden h-32 w-32 rounded-full bg-[#FAF8F5] p-5 shadow-xl md:flex items-center justify-center border border-neutral-100"
+              transition={{ duration: 45, ease: "linear", repeat: Infinity }}
+              className="absolute -bottom-8 -right-8 hidden h-32 w-32 rounded-full bg-[#FAF8F5] p-5 shadow-luxury md:flex items-center justify-center border border-[#f5e6d3]/20"
             >
               <img 
                 src="/logo.jpeg" 
                 alt="" 
-                className="h-16 w-16 object-contain" 
+                className="h-16 w-16 object-contain rounded-xs brightness-95" 
               />
             </motion.div>
           </motion.div>
 
+          {/* Story Right Text details */}
           <motion.div
             variants={stagger}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: "-100px" }}
-            className="space-y-6"
+            className="space-y-6 md:pl-6"
           >
-            <motion.p variants={fadeUp} className="text-[10px] font-bold uppercase tracking-[0.28em] text-maroon-600">
-              Since our first bolt of silk
+            <motion.p variants={fadeUp} className="text-[10px] font-bold uppercase tracking-[0.28em] text-brand-terracotta">
+              Craft First. Always.
             </motion.p>
-            <motion.h2 variants={fadeUp} className="font-editorial text-4xl sm:text-5xl font-light text-neutral-800 tracking-wide leading-tight">
-              Craft, first. Always.
-            </motion.h2>
-            <motion.p variants={fadeUp} className="text-sm leading-relaxed text-neutral-500 font-light">
-              Siankan began as a conversation between three sisters and a bolt of naturally-dyed cotton silk. Today we work with a small circle of artisans across Gujarat — dyers, mirror-workers, tailors — to make pieces that feel like heirlooms the moment you slip them on.
+            <h2 className="font-editorial text-4xl sm:text-5xl font-light text-stone-850 tracking-wide leading-tight">
+              Sainkai Heritage
+            </h2>
+            <div className="w-12 h-[1px] bg-brand-gold" />
+            
+            <motion.p variants={fadeUp} className="text-xs sm:text-sm leading-relaxed text-stone-500 font-light space-y-4">
+              Sainkai began as a conversation between sisters and a single bolt of naturally-dyed silk. Today, we work with a small circle of veteran karigars across Gujarat—dyers, handloom weavers, and mirror-work embroiderers—to craft garments that carry the weight of heirlooms the moment you wear them.
             </motion.p>
-            <motion.p variants={fadeUp} className="text-sm leading-relaxed text-neutral-500 font-light">
-              No mass production. No middlemen. Just careful hands and slow, thoughtful design.
+            
+            <motion.p variants={fadeUp} className="text-xs sm:text-sm leading-relaxed text-stone-500 font-light">
+              No mass production. No shortcuts. Just deliberate hands, slow weaving cycles, and timeless editorial styling.
             </motion.p>
-            <motion.div variants={fadeUp} className="pt-4">
-              <Link href="/about" className="group inline-flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.25em] text-neutral-850 hover:text-maroon-600 transition-colors">
-                <span className="border-b border-neutral-800 pb-1">Read our story</span>
+            
+            <motion.div variants={fadeUp} className="pt-6">
+              <Link 
+                href="/about" 
+                className="group inline-flex items-center gap-3 text-[9px] font-bold uppercase tracking-[0.25em] text-[#171717] hover:text-brand-terracotta transition-colors"
+              >
+                <span className="border-b border-[#171717] group-hover:border-brand-terracotta pb-1 transition-colors">
+                  Read Our Story
+                </span>
                 <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1.5" />
               </Link>
             </motion.div>

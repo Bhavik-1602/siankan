@@ -27,11 +27,17 @@ const dmSans = DM_Sans({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-export const metadata: Metadata = {
-  title: "Siankan — Handcrafted Indian Wear | Luxury Sarees, Lehengas & Gowns",
-  description: "Siankan: hand-dyed lehengas, gowns and kurti sets. Small-batch contemporary Indian wear, made in India.",
-  keywords: ["sarees", "banarasi", "handcrafted", "luxury wear", "designer choli", "lehenga", "festive wear"],
-};
+  export const metadata: Metadata = {
+    title: "Siankan — Handcrafted Indian Wear | Luxury Sarees, Lehengas & Gowns",
+    description:
+      "Siankan: hand-dyed lehengas, gowns and kurti sets. Small-batch contemporary Indian wear, made in India.",
+
+   icons: {
+  icon: "/favicon.png?v=3",
+  shortcut: "/favicon.png?v=3",
+  apple: "/favicon.png?v=3",
+},
+  };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

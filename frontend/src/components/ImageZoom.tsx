@@ -57,7 +57,7 @@ export default function ImageZoom({ src, zoomSrc, alt = "Garment fabric details"
 
   return (
     <div 
-      className="relative overflow-hidden cursor-zoom-in rounded-lg border border-neutral-200/60 shadow-md inline-block w-full h-full select-none"
+      className="relative overflow-hidden cursor-zoom-in rounded-xs border border-stone-200/40 shadow-sm inline-block w-full h-full select-none"
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
